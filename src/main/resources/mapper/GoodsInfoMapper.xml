@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zlh.he_ma_master.dao.GoodsInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.zlh.he_ma_master.entity.GoodsInfo">
+            <id property="goodId" column="good_id" jdbcType="BIGINT"/>
+            <result property="goodName" column="good_name" jdbcType="VARCHAR"/>
+            <result property="goodIntro" column="good_intro" jdbcType="VARCHAR"/>
+            <result property="goodCategoryId" column="good_category_id" jdbcType="BIGINT"/>
+            <result property="goodImg" column="good_img" jdbcType="VARCHAR"/>
+            <result property="goodCarousel" column="good_carousel" jdbcType="VARCHAR"/>
+            <result property="originalPrice" column="original_price" jdbcType="INTEGER"/>
+            <result property="sellingPrice" column="selling_price" jdbcType="INTEGER"/>
+            <result property="stockNum" column="stock_num" jdbcType="INTEGER"/>
+            <result property="goodDetailContent" column="good_detail_content" jdbcType="VARCHAR"/>
+            <result property="tag" column="tag" jdbcType="VARCHAR"/>
+            <result property="goodSellStatus" column="good_sell_status" jdbcType="TINYINT"/>
+            <result property="createUser" column="create_user" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateUser" column="update_user" jdbcType="INTEGER"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        good_id,good_name,good_intro,
+        good_category_id,good_img,good_carousel,
+        original_price,selling_price,stock_num,
+        good_detail_content,tag,good_sell_status,
+        create_user,create_time,update_user,
+        update_time,is_delete
+    </sql>
+</mapper>
