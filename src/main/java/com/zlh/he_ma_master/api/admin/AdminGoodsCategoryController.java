@@ -75,7 +75,7 @@ public class AdminGoodsCategoryController {
     @DeleteMapping("/categories")
     public Result deleteCategory(@RequestBody @Valid BatchIdParam idParam,@TokenToAdminUser AdminUserToken adminUserToken){
         logger.info("adminUser GoodsCategory api, adminUserId={}",adminUserToken.getUserId());
-        if (goodsCategoryService.removeBatchByIds(Arrays.asList(idParam.getIds()))){
+        if (goodsCategoryService.removeCategory(idParam)){
             return ResultGenerator.getSuccessResult();
         }else {
             return ResultGenerator.getFailResult();

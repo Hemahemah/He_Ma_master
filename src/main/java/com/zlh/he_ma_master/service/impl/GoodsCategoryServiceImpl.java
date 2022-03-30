@@ -1,9 +1,10 @@
 package com.zlh.he_ma_master.service.impl;
 
-import java.util.Date;
+import java.util.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
 import com.zlh.he_ma_master.api.admin.param.CategoryAddParam;
 import com.zlh.he_ma_master.api.admin.param.CategoryEditParam;
 import com.zlh.he_ma_master.common.HeMaException;
@@ -72,6 +73,26 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
         updateCategory.setCategoryRank(editParam.getCategoryRank());
         updateCategory.setUpdateTime(new Date());
         return updateById(updateCategory);
+    }
+
+    // todo warn Transaction not enabled ??
+    @Override
+    public boolean removeCategory(BatchIdParam idParam) {
+        // 1. 如果不存在id参数,直接返回
+        if (idParam.getIds().length == 0){
+            return false;
+        }
+        QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("parent_id", Arrays.asList(idParam.getIds()));
+        // 2. 查询标签是否存在子标签
+        List<GoodsCategory> categoryList = list(queryWrapper);
+        List<Long> idList = new ArrayList<>();
+        categoryList.forEach((category)-> idList.add(category.getCategoryId()));
+        // 3. 递归删除
+        BatchIdParam batchIdParam = new BatchIdParam(idList.toArray(new Long[]{}));
+        removeCategory(batchIdParam);
+        // 4. 删除标签
+        return removeBatchByIds(Arrays.asList(idParam.getIds()));
     }
 
 }

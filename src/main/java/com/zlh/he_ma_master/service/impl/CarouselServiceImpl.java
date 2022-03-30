@@ -60,7 +60,7 @@ public class CarouselServiceImpl extends ServiceImpl<CarouselMapper, Carousel>
     }
 
     @Override
-    public boolean deleteCarousel(Integer[] ids) {
+    public boolean deleteCarousel(Long[] ids) {
         return removeBatchByIds(Arrays.asList(ids));
 
     }

@@ -1,6 +1,7 @@
 package com.zlh.he_ma_master.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
 import com.zlh.he_ma_master.api.admin.param.CategoryAddParam;
 import com.zlh.he_ma_master.api.admin.param.CategoryEditParam;
 import com.zlh.he_ma_master.entity.GoodsCategory;
@@ -37,4 +38,10 @@ public interface GoodsCategoryService extends IService<GoodsCategory> {
      */
     boolean updateCategory(CategoryEditParam editParam);
 
+    /**
+     * 删除商品分类
+     * @param idParam 商品编号
+     * @return true成功
+     */
+    boolean removeCategory(BatchIdParam idParam);
 }

@@ -48,5 +48,5 @@ public interface CarouselService extends IService<Carousel> {
      * @param ids 轮播图编号
      * @return true 删除成功
      */
-    boolean deleteCarousel(Integer[] ids);
+    boolean deleteCarousel(Long[] ids);
 }

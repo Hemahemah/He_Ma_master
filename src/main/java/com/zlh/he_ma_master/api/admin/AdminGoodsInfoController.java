@@ -52,7 +52,7 @@ public class AdminGoodsInfoController {
     }
 
     //todo 测试添加
-    @PutMapping("/goods")
+    @PostMapping("/goods")
     public Result saveGood(@RequestBody @Valid GoodAddParam goodAddParam, @TokenToAdminUser AdminUserToken adminUserToken){
         logger.info("adminUser GoodsInfo api, adminUserId={}",adminUserToken.getUserId());
         if (goodsInfoService.saveGoodInfo(goodAddParam)){
