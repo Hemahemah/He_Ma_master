@@ -1,9 +1,12 @@
 package com.zlh.he_ma_master.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
 import com.zlh.he_ma_master.api.admin.param.GoodAddParam;
+import com.zlh.he_ma_master.api.admin.param.GoodsEditParam;
 import com.zlh.he_ma_master.common.HeMaException;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
 import com.zlh.he_ma_master.entity.GoodsCategory;
@@ -14,9 +17,7 @@ import com.zlh.he_ma_master.dao.GoodsInfoMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
 * @author lh
@@ -62,10 +63,7 @@ public class GoodsInfoServiceImpl extends ServiceImpl<GoodsInfoMapper, GoodsInfo
 
     @Override
     public boolean saveGoodInfo(GoodAddParam goodAddParam) {
-        GoodsInfo goodsInfo = new GoodsInfo();
-        BeanUtils.copyProperties(goodAddParam,goodsInfo);
-        goodsInfo.setCreateTime(new Date());
-        goodsInfo.setUpdateTime(new Date());
+        GoodsInfo goodsInfo = copyProperties(goodAddParam);
         GoodsCategory category = categoryService.getById(goodsInfo.getGoodCategoryId());
         // 1. 校验分类是否为三级分类
         if (category == null || category.getCategoryLevel() != 3){
@@ -79,6 +77,53 @@ public class GoodsInfoServiceImpl extends ServiceImpl<GoodsInfoMapper, GoodsInfo
             throw new HeMaException(ServiceResultEnum.SAME_GOODS_EXIST.getResult());
         }
         return save(goodsInfo);
+    }
+
+    @Override
+    public boolean updateGoodsInfo(GoodsEditParam editParam) {
+        GoodsInfo goodsInfo = copyProperties(editParam);
+        GoodsCategory category = categoryService.getById(goodsInfo.getGoodCategoryId());
+        // 1. 校验分类是否为三级分类
+        if (category == null || category.getCategoryLevel() != 3){
+            throw new HeMaException(ServiceResultEnum.GOODS_CATEGORY_ERROR.getResult());
+        }
+        // 2. 查询是否存在该商品
+        GoodsInfo goods = getById(goodsInfo.getGoodId());
+        if (goods == null){
+            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+        }
+        // 3. 判断相同分类下是否有相同名字且id不同的商品
+        QueryWrapper<GoodsInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("good_name",goodsInfo.getGoodName()).
+                eq("good_category_id",goodsInfo.getGoodCategoryId()).ne("good_id",goodsInfo.getGoodId());
+        GoodsInfo info = getOne(queryWrapper);
+        if (info != null){
+            throw new HeMaException(ServiceResultEnum.SAME_GOODS_EXIST.getResult());
+        }
+        return updateById(goodsInfo);
+    }
+
+    @Override
+    public boolean updateStatus(int sellStatus, BatchIdParam idParam) {
+        // 1. 是否存在商品
+        QueryWrapper<GoodsInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("good_id", Arrays.asList(idParam.getIds()));
+        List<GoodsInfo> goodsInfos = list(queryWrapper);
+        if ( goodsInfos.size() != idParam.getIds().length ){
+            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+        }
+        // 2. 更改商品状态
+        goodsInfos.forEach((goodsInfo -> goodsInfo.setGoodSellStatus(sellStatus)));
+        return updateBatchById(goodsInfos);
+    }
+
+    private GoodsInfo copyProperties(Object obj){
+        GoodsInfo goodsInfo = new GoodsInfo();
+        BeanUtils.copyProperties(obj,goodsInfo);
+        goodsInfo.setGoodCarousel(goodsInfo.getGoodImg());
+        goodsInfo.setCreateTime(new Date());
+        goodsInfo.setUpdateTime(new Date());
+        return goodsInfo;
     }
 }
 

@@ -11,8 +11,8 @@
             <result property="goodCategoryId" column="good_category_id" jdbcType="BIGINT"/>
             <result property="goodImg" column="good_img" jdbcType="VARCHAR"/>
             <result property="goodCarousel" column="good_carousel" jdbcType="VARCHAR"/>
-            <result property="originalPrice" column="original_price" jdbcType="INTEGER"/>
-            <result property="sellingPrice" column="selling_price" jdbcType="INTEGER"/>
+            <result property="originalPrice" column="original_price" jdbcType="DECIMAL"/>
+            <result property="sellingPrice" column="selling_price" jdbcType="DECIMAL"/>
             <result property="stockNum" column="stock_num" jdbcType="INTEGER"/>
             <result property="goodDetailContent" column="good_detail_content" jdbcType="VARCHAR"/>
             <result property="tag" column="tag" jdbcType="VARCHAR"/>

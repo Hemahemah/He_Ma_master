@@ -1,11 +1,14 @@
 package com.zlh.he_ma_master.api.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
 import com.zlh.he_ma_master.api.admin.param.GoodAddParam;
+import com.zlh.he_ma_master.api.admin.param.GoodsEditParam;
 import com.zlh.he_ma_master.config.annotation.TokenToAdminUser;
 import com.zlh.he_ma_master.entity.AdminUserToken;
 import com.zlh.he_ma_master.entity.GoodsInfo;
 import com.zlh.he_ma_master.service.GoodsInfoService;
+import com.zlh.he_ma_master.utils.Constants;
 import com.zlh.he_ma_master.utils.Result;
 import com.zlh.he_ma_master.utils.ResultGenerator;
 import org.slf4j.Logger;
@@ -41,7 +44,7 @@ public class AdminGoodsInfoController {
     }
 
     @GetMapping("/goods/{id}")
-    public Result<Map<String,Object>> getGood(@PathVariable Long id, @TokenToAdminUser AdminUserToken adminUserToken){
+    public Result<Map<String,Object>> getGoods(@PathVariable Long id, @TokenToAdminUser AdminUserToken adminUserToken){
         logger.info("adminUser GoodsInfo api, adminUserId={}",adminUserToken.getUserId());
         Map<String,Object> goodInfoMap = goodsInfoService.getGoodInfo(id);
         if (goodInfoMap == null){
@@ -51,14 +54,38 @@ public class AdminGoodsInfoController {
         }
     }
 
-    //todo 测试添加
     @PostMapping("/goods")
-    public Result saveGood(@RequestBody @Valid GoodAddParam goodAddParam, @TokenToAdminUser AdminUserToken adminUserToken){
+    public Result saveGoods(@RequestBody @Valid GoodAddParam goodAddParam, @TokenToAdminUser AdminUserToken adminUserToken){
         logger.info("adminUser GoodsInfo api, adminUserId={}",adminUserToken.getUserId());
         if (goodsInfoService.saveGoodInfo(goodAddParam)){
             return ResultGenerator.getSuccessResult();
         }else {
-            return ResultGenerator.getFailResult();
+            return ResultGenerator.getFailResult("保存商品失败!");
+        }
+    }
+
+    @PutMapping("/goods")
+    public Result updateGoods(@RequestBody @Valid GoodsEditParam editParam, @TokenToAdminUser AdminUserToken adminUserToken){
+        logger.info("adminUser GoodsInfo api, adminUserId={}",adminUserToken.getUserId());
+        if (goodsInfoService.updateGoodsInfo(editParam)) {
+            return ResultGenerator.getSuccessResult();
+        }else {
+            return ResultGenerator.getFailResult("修改商品失败");
+        }
+    }
+
+    @PutMapping("/goods/status/{sellStatus}")
+    public Result updateStatus(@PathVariable int sellStatus, @RequestBody BatchIdParam idParam, @TokenToAdminUser AdminUserToken adminUserToken){
+        if (idParam.getIds().length < 1){
+            return ResultGenerator.getFailResult("参数异常");
+        }
+        if (sellStatus != Constants.SELL_STATUS_UP && sellStatus != Constants.SELL_STATUS_DOWN){
+            return ResultGenerator.getFailResult("状态参数异常");
+        }
+        if (goodsInfoService.updateStatus(sellStatus,idParam)){
+            return ResultGenerator.getSuccessResult();
+        }else {
+            return ResultGenerator.getFailResult("更新状态失败");
         }
     }
 

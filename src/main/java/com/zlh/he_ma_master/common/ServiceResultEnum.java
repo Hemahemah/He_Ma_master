@@ -14,6 +14,8 @@ public enum ServiceResultEnum {
 
     ADMIN_NOT_EXIST("未查询到该管理员!"),
 
+    DATA_NOT_EXIST("未查询到记录！"),
+
     MESSAGE_UPDATE_ERROR("信息修改失败!"),
 
     ADMIN_PASSWORD_ERROR("密码错误!"),

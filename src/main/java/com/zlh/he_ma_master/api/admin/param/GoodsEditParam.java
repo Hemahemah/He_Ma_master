@@ -2,6 +2,7 @@ package com.zlh.he_ma_master.api.admin.param;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -10,7 +11,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
-public class GoodAddParam implements Serializable {
+public class GoodsEditParam implements Serializable {
+
+    @NotNull(message = "商品编号不能为空!")
+    private Long goodId;
 
     @NotNull(message = "分类id不能为空")
     @Min(value = 1, message = "分类id最低为1")

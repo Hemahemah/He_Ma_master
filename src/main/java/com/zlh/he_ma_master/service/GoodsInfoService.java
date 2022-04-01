@@ -1,7 +1,9 @@
 package com.zlh.he_ma_master.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
 import com.zlh.he_ma_master.api.admin.param.GoodAddParam;
+import com.zlh.he_ma_master.api.admin.param.GoodsEditParam;
 import com.zlh.he_ma_master.entity.GoodsInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -35,4 +37,19 @@ public interface GoodsInfoService extends IService<GoodsInfo> {
      * @return true 添加成功
      */
     boolean saveGoodInfo(GoodAddParam goodAddParam);
+
+    /**
+     * 修改商品信息
+     * @param editParam 商品修改参数
+     * @return true 添加成功
+     */
+    boolean updateGoodsInfo(GoodsEditParam editParam);
+
+    /**
+     * 修改商品状态
+     * @param sellStatus 商品状态
+     * @param idParam 商品编号
+     * @return true 添加成功
+     */
+    boolean updateStatus(int sellStatus, BatchIdParam idParam);
 }

@@ -31,5 +31,15 @@ public class Constants {
      */
     public static final String GOOD_IMG_PATH = "file:D:\\IDEA\\Project\\He_Ma_master\\src\\main\\resources\\static\\goods-img\\";
 
+    /**
+     * 商品上架状态
+     */
+    public final static int SELL_STATUS_UP = 0;
+
+    /**
+     * 商品下架状态
+     */
+    public final static int SELL_STATUS_DOWN = 1;
+
 
 }
