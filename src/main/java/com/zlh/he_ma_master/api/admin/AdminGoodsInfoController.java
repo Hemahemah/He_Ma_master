@@ -18,6 +18,9 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.Map;
 
+/**
+ * @author lh
+ */
 @RestController
 @RequestMapping("/he_ma")
 public class AdminGoodsInfoController {

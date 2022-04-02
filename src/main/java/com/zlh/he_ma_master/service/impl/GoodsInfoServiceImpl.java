@@ -1,7 +1,6 @@
 package com.zlh.he_ma_master.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
@@ -122,7 +121,6 @@ public class GoodsInfoServiceImpl extends ServiceImpl<GoodsInfoMapper, GoodsInfo
         BeanUtils.copyProperties(obj,goodsInfo);
         goodsInfo.setGoodCarousel(goodsInfo.getGoodImg());
         goodsInfo.setCreateTime(new Date());
-        goodsInfo.setUpdateTime(new Date());
         return goodsInfo;
     }
 }
