@@ -1,10 +1,11 @@
 package com.zlh.he_ma_master.utils;
 
-import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * @author lh
+ */
 public class EncryptUtil {
 
     /**
@@ -13,8 +14,9 @@ public class EncryptUtil {
      * @return token
      */
     public static String getToken(String userId){
-        if(userId == null )
+        if(userId == null ){
             return null ;
+        }
         String origin = userId + System.currentTimeMillis() + genRandomNum(6);
         StringBuilder sb = new StringBuilder() ;
         MessageDigest digest = null ;
@@ -26,12 +28,14 @@ public class EncryptUtil {
         }
         //生成一组length=16的byte数组
         byte[] bs = digest.digest(origin.getBytes()) ;
-        for (int i = 0; i < bs.length; i++) {
-            int c = bs[i] & 0xFF ; //byte转int为了不丢失符号位， 所以&0xFF
-            if(c < 16){ //如果c小于16，就说明，可以只用1位16进制来表示， 那么在前面补一个0
+        for (byte b : bs) {
+            //byte转int为了不丢失符号位， 所以&0xFF
+            int c = b & 0xFF;
+            //如果c小于16，就说明，可以只用1位16进制来表示， 那么在前面补一个0
+            if (c < 16) {
                 sb.append("0");
             }
-            sb.append(Integer.toHexString(c)) ;
+            sb.append(Integer.toHexString(c));
         }
         return sb.toString() ;
     }

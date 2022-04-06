@@ -11,11 +11,7 @@ import javax.validation.constraints.NotNull;
  * @author lh
  */
 @Data
-public class ConfigEditParam {
-
-    @NotNull(message = "configId不能为空")
-    @Min(value = 1, message = "configId不能为空")
-    private Long configId;
+public class ConfigAddParam {
 
     @Min(value = 1, message = "configType最小为1")
     @Max(value = 5, message = "configType最大为5")
@@ -35,6 +31,4 @@ public class ConfigEditParam {
     @Min(value = 1, message = "categoryRank最低为1")
     @Max(value = 200, message = "categoryRank最高为200")
     private Integer configRank;
-
-
 }

@@ -10,6 +10,7 @@ import lombok.Data;
 
 /**
  * admin_user
+ * @author lh
  * @TableName admin_user
  */
 @TableName(value ="admin_user")

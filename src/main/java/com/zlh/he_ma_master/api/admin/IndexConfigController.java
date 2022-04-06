@@ -1,6 +1,8 @@
 package com.zlh.he_ma_master.api.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
+import com.zlh.he_ma_master.api.admin.param.ConfigAddParam;
 import com.zlh.he_ma_master.api.admin.param.ConfigEditParam;
 import com.zlh.he_ma_master.config.annotation.TokenToAdminUser;
 import com.zlh.he_ma_master.entity.AdminUserToken;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.Arrays;
 
 /**
  * @author lh
@@ -59,8 +62,32 @@ public class IndexConfigController {
     public Result updateConfig(@RequestBody @Valid ConfigEditParam editParam, @TokenToAdminUser AdminUserToken adminUserToken){
         logger.info("adminUser indexConfig api, adminUserId={}", adminUserToken.getUserId());
         if (indexConfigService.updateConfig(editParam)){
-            // todo update
+            return ResultGenerator.getSuccessResult();
+        } else {
+            return ResultGenerator.getFailResult("修改失败,请查看控制台异常信息");
         }
-        return null;
+    }
+
+    @PostMapping("/indexConfigs")
+    public Result addIndexConfig(@RequestBody @Valid ConfigAddParam addParam, @TokenToAdminUser AdminUserToken adminUserToken){
+        logger.info("adminUser indexConfig api, adminUserId={}", adminUserToken.getUserId());
+        if (indexConfigService.addConfig(addParam)){
+            return ResultGenerator.getSuccessResult();
+        } else {
+            return ResultGenerator.getFailResult("修改失败,请查看控制台异常信息");
+        }
+    }
+
+    @DeleteMapping("/indexConfigs")
+    public Result deleteIndexConfig(@RequestBody BatchIdParam idParam, @TokenToAdminUser AdminUserToken adminUserToken){
+        logger.info("adminUser indexConfig api, adminUserId={}", adminUserToken.getUserId());
+        if (idParam == null || idParam.getIds().length < 1) {
+            return ResultGenerator.getFailResult("参数异常");
+        }
+        if (indexConfigService.removeConfig(idParam.getIds())){
+            return ResultGenerator.getSuccessResult();
+        } else {
+            return ResultGenerator.getFailResult("删除失败,请查看控制台异常信息");
+        }
     }
 }

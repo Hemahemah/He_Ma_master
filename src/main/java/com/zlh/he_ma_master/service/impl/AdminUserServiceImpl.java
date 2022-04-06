@@ -1,7 +1,6 @@
 package com.zlh.he_ma_master.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zlh.he_ma_master.api.admin.param.AdminUpdateNameParam;
 import com.zlh.he_ma_master.api.admin.param.AdminUpdatePasswordParam;
@@ -40,11 +39,12 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
             tokenQueryWrapper.eq("user_id",adminUser.getUserId());
             AdminUserToken adminUserToken = adminUserTokenMapper.selectOne(tokenQueryWrapper);
             Date updateTime = new Date();
+            //72小时过期
             Date expireTime = new Date(updateTime.getTime()+ 3 * 24 * 3600 * 1000);
             // 3. 如果有更新token,没有则生成token
             if (adminUserToken != null){
                 adminUserToken.setUpdateTime(updateTime);
-                adminUserToken.setExpireTime(expireTime);//72小时过期
+                adminUserToken.setExpireTime(expireTime);
                 adminUserTokenMapper.updateById(adminUserToken);
                 return adminUserToken.getToken();
             }else {

@@ -11,39 +11,39 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
- * admin_user_token
+ *
  * @author lh
- * @TableName admin_user_token
+ * @TableName mall_user_token
  */
-@TableName(value ="admin_user_token")
+@TableName(value ="mall_user_token")
 @Data
-public class AdminUserToken implements Serializable {
+public class MallUserToken implements Serializable {
     /**
-     *
+     * token id
      */
     @TableId(type = IdType.AUTO)
-    private Integer tokenId;
+    private Long tokenId;
 
     /**
-     *
+     * 用户主键id
      */
     private Long userId;
 
     /**
-     *
+     * token值(32位字符串)
      */
     private String token;
 
     /**
-     *
+     * 修改时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
     /**
-     *
+     * token过期时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date expireTime;
 
     @TableField(exist = false)
@@ -60,7 +60,7 @@ public class AdminUserToken implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        AdminUserToken other = (AdminUserToken) that;
+        MallUserToken other = (MallUserToken) that;
         return (this.getTokenId() == null ? other.getTokenId() == null : this.getTokenId().equals(other.getTokenId()))
             && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
             && (this.getToken() == null ? other.getToken() == null : this.getToken().equals(other.getToken()))

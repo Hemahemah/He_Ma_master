@@ -7,7 +7,6 @@ import com.zlh.he_ma_master.config.annotation.TokenToAdminUser;
 import com.zlh.he_ma_master.dao.AdminUserTokenMapper;
 import com.zlh.he_ma_master.entity.AdminUserToken;
 import com.zlh.he_ma_master.utils.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -17,6 +16,9 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import javax.annotation.Resource;
 
+/**
+ * @author lh
+ */
 @Component
 public class TokenToAdminUserMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -32,7 +34,7 @@ public class TokenToAdminUserMethodArgumentResolver implements HandlerMethodArgu
      * TokenToAdminUser自动注入参数处理
      */
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         String token = webRequest.getHeader("token");
         // 1. 是否有token参数
         if (StringUtils.hasText(token) && token.length() == Constants.TOKEN_LENGTH){

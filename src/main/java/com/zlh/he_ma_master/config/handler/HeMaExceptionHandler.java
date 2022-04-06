@@ -3,12 +3,19 @@ package com.zlh.he_ma_master.config.handler;
 import com.zlh.he_ma_master.common.HeMaException;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
 import com.zlh.he_ma_master.utils.Result;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
  * 自定义异常处理器
+ * @author lh
  */
 @RestControllerAdvice
 public class HeMaExceptionHandler {
@@ -38,6 +45,18 @@ public class HeMaExceptionHandler {
         e.printStackTrace();
         return result;
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Result<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e ){
+        Result<String> result = new Result<>();
+        result.setResultCode(400);
+        StringBuilder sb = new StringBuilder();
+        List<ObjectError> allErrors = e.getBindingResult().getAllErrors();
+        String message = allErrors.stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining(";"));
+        result.setMessage(message);
+        return result;
+    }
+
 
 
 }

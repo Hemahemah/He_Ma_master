@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface TokenToAdminUser {
+public @interface TokenToMallUser {
 
-    String value() default "adminUser";
+    String value() default "user";
 }

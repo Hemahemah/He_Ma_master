@@ -1,6 +1,7 @@
 package com.zlh.he_ma_master.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zlh.he_ma_master.api.admin.param.ConfigAddParam;
 import com.zlh.he_ma_master.api.admin.param.ConfigEditParam;
 import com.zlh.he_ma_master.entity.IndexConfig;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -24,7 +25,21 @@ public interface IndexConfigService extends IService<IndexConfig> {
     /**
      * 修改配置信息
      * @param editParam 配置参数
-     * @return true修改成功
+     * @return true 修改成功
      */
     boolean updateConfig(ConfigEditParam editParam);
+
+    /**
+     * 添加配置信息
+     * @param addParam 配置参数
+     * @return true 添加成功
+     */
+    boolean addConfig(ConfigAddParam addParam);
+
+    /**
+     * 删除配置信息
+     * @param ids 配置编号
+     * @return true 删除成功
+     */
+    boolean removeConfig(Long[] ids);
 }

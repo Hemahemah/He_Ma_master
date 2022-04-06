@@ -2,6 +2,7 @@ package com.zlh.he_ma_master.utils;
 
 /**
  * 响应工具类
+ * @author lh
  */
 public class ResultGenerator {
 
