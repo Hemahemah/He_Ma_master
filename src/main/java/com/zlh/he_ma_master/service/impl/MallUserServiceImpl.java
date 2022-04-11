@@ -3,6 +3,7 @@ import java.util.Date;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zlh.he_ma_master.api.mall.param.MallUserRegisterParam;
 import com.zlh.he_ma_master.api.mall.param.MallUserUpdateParam;
 import com.zlh.he_ma_master.common.HeMaException;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
@@ -12,6 +13,7 @@ import com.zlh.he_ma_master.service.MallUserService;
 import com.zlh.he_ma_master.dao.MallUserMapper;
 import com.zlh.he_ma_master.service.MallUserTokenService;
 import com.zlh.he_ma_master.utils.EncryptUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
@@ -74,6 +76,21 @@ public class MallUserServiceImpl extends ServiceImpl<MallUserMapper, MallUser>
         user.setIntroduceSign(userUpdateParam.getIntroduceSign());
         user.setNickName(userUpdateParam.getNickName());
         return updateById(user);
+    }
+
+    @Override
+    public boolean register(MallUserRegisterParam registerParam) {
+        // 1. 查询用户名是否重复
+        MallUser mallUser = getOne(new QueryWrapper<MallUser>().eq("login_name", registerParam.getLoginName()));
+        if (mallUser != null){
+            throw new HeMaException(ServiceResultEnum.SAME_LOGIN_NAME_EXIST.getResult());
+        }
+        // 2. 设置默认简介与昵称
+        mallUser = new MallUser();
+        BeanUtils.copyProperties(registerParam, mallUser);
+        mallUser.setNickName(registerParam.getLoginName());
+        mallUser.setIntroduceSign(ServiceResultEnum.USER_INTRO.getResult());
+        return save(mallUser);
     }
 
 

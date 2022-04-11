@@ -17,7 +17,7 @@ import lombok.Data;
 @Data
 public class AdminUser implements Serializable {
     /**
-     * todo:查询默认不返回createTime与updateTime
+     *
      */
     @TableId(type = IdType.AUTO)
     private Long userId;

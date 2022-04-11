@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
 import com.zlh.he_ma_master.api.admin.param.GoodAddParam;
 import com.zlh.he_ma_master.api.admin.param.GoodsEditParam;
+import com.zlh.he_ma_master.api.mall.vo.MallSearchGoodsVO;
 import com.zlh.he_ma_master.entity.GoodsInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -52,4 +53,14 @@ public interface GoodsInfoService extends IService<GoodsInfo> {
      * @return true 添加成功
      */
     boolean updateStatus(int sellStatus, BatchIdParam idParam);
+
+    /**
+     * 搜索商品
+     * @param keyword 关键词
+     * @param goodsCategoryId 商品分类Id
+     * @param orderBy 排序
+     * @param pageNumber 页码
+     * @return 商品信息
+     */
+    Page<MallSearchGoodsVO> searchGoods(String keyword, Long goodsCategoryId, String orderBy, Integer pageNumber);
 }

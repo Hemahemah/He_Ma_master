@@ -100,6 +100,13 @@ public enum ServiceResultEnum {
      * 用户未登录
      */
     MALL_USER_NOT_LOGIN_ERROR("未登录!"),
+
+    /**
+     * 手机号已被注册
+     */
+    SAME_LOGIN_NAME_EXIST("手机号已被注册！"),
+
+    USER_INTRO("暂无简介"),
     ;
 
     private String result;

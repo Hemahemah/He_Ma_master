@@ -3,8 +3,10 @@ package com.zlh.he_ma_master.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zlh.he_ma_master.api.admin.param.CarouselAddParam;
 import com.zlh.he_ma_master.api.admin.param.CarouselEditParam;
+import com.zlh.he_ma_master.api.mall.vo.MallIndexCarouselVO;
 import com.zlh.he_ma_master.entity.Carousel;
 import com.baomidou.mybatisplus.extension.service.IService;
+import java.util.List;
 
 /**
 * 轮播图模块
@@ -49,4 +51,11 @@ public interface CarouselService extends IService<Carousel> {
      * @return true 删除成功
      */
     boolean deleteCarousel(Long[] ids);
+
+    /**
+     * 获取首页轮播图
+     * @param indexCarouselNumber 轮播图数量
+     * @return 轮播图数据
+     */
+    List<MallIndexCarouselVO> getCarouselForIndex(int indexCarouselNumber);
 }

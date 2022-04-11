@@ -1,6 +1,7 @@
 package com.zlh.he_ma_master.api.mall;
 
 import com.zlh.he_ma_master.api.mall.param.MallUserLoginParam;
+import com.zlh.he_ma_master.api.mall.param.MallUserRegisterParam;
 import com.zlh.he_ma_master.api.mall.param.MallUserUpdateParam;
 import com.zlh.he_ma_master.api.mall.vo.MallUserVO;
 import com.zlh.he_ma_master.config.annotation.TokenToMallUser;
@@ -23,7 +24,7 @@ import javax.validation.Valid;
  * @author lh
  */
 @RestController
-@RequestMapping("/he_ma")
+@RequestMapping("/he_ma_api")
 public class MallUserController {
 
     @Resource
@@ -62,6 +63,7 @@ public class MallUserController {
 
     @GetMapping("/user/info")
     public Result<MallUserVO> getUserInfo(@TokenToMallUser MallUser mallUser){
+        logger.info("info api,loginName={}", mallUser.getLoginName());
         MallUserVO mallUserVO = new MallUserVO();
         BeanUtils.copyProperties(mallUser,mallUserVO);
         return ResultGenerator.getSuccessResult(mallUserVO);
@@ -69,6 +71,7 @@ public class MallUserController {
 
     @PutMapping("/user/info")
     public Result<String> updateInfo(@RequestBody @Valid MallUserUpdateParam userUpdateParam, @TokenToMallUser MallUser mallUser){
+        logger.info("update api,loginName={}", mallUser.getLoginName());
         if (mallUserService.updateInfo(userUpdateParam, mallUser.getUserId())){
             return ResultGenerator.getSuccessResult();
         }else {
@@ -76,6 +79,17 @@ public class MallUserController {
         }
     }
 
-
+    @PostMapping("/user/register")
+    public Result<String> register(@RequestBody @Valid MallUserRegisterParam registerParam){
+        // 校验用户名是否为手机号
+        if (!NumberUtil.isPhone(registerParam.getLoginName())){
+            return ResultGenerator.getFailResult("请输入正确的手机号!");
+        }
+        if (mallUserService.register(registerParam)){
+            return ResultGenerator.getSuccessResult();
+        }else {
+            return ResultGenerator.getFailResult("注册失败!");
+        }
+    }
 
 }

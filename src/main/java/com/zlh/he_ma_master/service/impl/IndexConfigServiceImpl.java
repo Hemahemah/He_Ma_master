@@ -5,18 +5,23 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zlh.he_ma_master.api.admin.param.ConfigAddParam;
 import com.zlh.he_ma_master.api.admin.param.ConfigEditParam;
+import com.zlh.he_ma_master.api.mall.vo.MallIndexConfigGoodsVO;
 import com.zlh.he_ma_master.common.HeMaException;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
+import com.zlh.he_ma_master.entity.GoodsInfo;
 import com.zlh.he_ma_master.entity.IndexConfig;
 import com.zlh.he_ma_master.service.GoodsInfoService;
 import com.zlh.he_ma_master.service.IndexConfigService;
 import com.zlh.he_ma_master.dao.IndexConfigMapper;
+import com.zlh.he_ma_master.utils.Constants;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * @author lh
@@ -88,6 +93,29 @@ public class IndexConfigServiceImpl extends ServiceImpl<IndexConfigMapper, Index
             throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
         }
         return removeBatchByIds(Arrays.asList(ids));
+    }
+
+    @Override
+    public List<MallIndexConfigGoodsVO> getConfigGoodsForIndex(int type, int indexGoodsHotNumber) {
+         List<MallIndexConfigGoodsVO> mallIndexConfigGoodsVos = new ArrayList<>(indexGoodsHotNumber);
+        Page<IndexConfig> pages = getPages(1, indexGoodsHotNumber, type);
+        // 1. 获取对应配置类型的商品id
+        List<Long> goodsId = pages.getRecords().stream().map(IndexConfig::getGoodsId).collect(Collectors.toList());
+        // 2. 获取商品信息
+        List<GoodsInfo> goodsInfos = goodsInfoService.listByIds(goodsId);
+        goodsInfos.forEach(goodsInfo -> {
+            MallIndexConfigGoodsVO indexConfigGoodsVO = new MallIndexConfigGoodsVO();
+            BeanUtils.copyProperties(goodsInfo, indexConfigGoodsVO);
+            // 商品名称过长
+            if (indexConfigGoodsVO.getGoodName().length() > Constants.NAME_MAX_LENGTH){
+                indexConfigGoodsVO.setGoodName(indexConfigGoodsVO.getGoodName().substring(0,30)+"...");
+            }
+            if (indexConfigGoodsVO.getGoodIntro().length() > Constants.NAME_MAX_LENGTH){
+                indexConfigGoodsVO.setGoodIntro(indexConfigGoodsVO.getGoodIntro().substring(0,30)+"...");
+            }
+            mallIndexConfigGoodsVos.add(indexConfigGoodsVO);
+        });
+        return mallIndexConfigGoodsVos;
     }
 
     private IndexConfig copyProperties(Object obj){

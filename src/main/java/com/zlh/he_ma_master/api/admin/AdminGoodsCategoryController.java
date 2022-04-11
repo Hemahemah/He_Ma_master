@@ -8,6 +8,7 @@ import com.zlh.he_ma_master.config.annotation.TokenToAdminUser;
 import com.zlh.he_ma_master.entity.AdminUserToken;
 import com.zlh.he_ma_master.entity.GoodsCategory;
 import com.zlh.he_ma_master.service.GoodsCategoryService;
+import com.zlh.he_ma_master.utils.Constants;
 import com.zlh.he_ma_master.utils.Result;
 import com.zlh.he_ma_master.utils.ResultGenerator;
 import org.slf4j.Logger;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.Arrays;
 
 /**
  * @author lh
@@ -34,7 +34,7 @@ public class AdminGoodsCategoryController {
                                   @RequestParam Integer categoryLevel, @RequestParam Long parentId,
                                   @TokenToAdminUser AdminUserToken adminUserToken){
         logger.info("adminUser GoodsCategory api, adminUserId={}",adminUserToken.getUserId());
-        if (pageNumber == null || pageNumber < 1 || pageSize == null || pageSize < 10 || categoryLevel == null
+        if (pageNumber == null || pageNumber < 1 || pageSize == null || pageSize < Constants.PAGE_MIN_SIZE || categoryLevel == null
                 || categoryLevel < 0 || categoryLevel > 3 || parentId == null || parentId < 0) {
             return ResultGenerator.getFailResult("分页参数异常！");
         }
@@ -56,7 +56,7 @@ public class AdminGoodsCategoryController {
     }
 
     @PostMapping("/categories")
-    public Result saveCategory(@RequestBody @Valid CategoryAddParam categoryAddParam, @TokenToAdminUser AdminUserToken adminUserToken){
+    public Result<String> saveCategory(@RequestBody @Valid CategoryAddParam categoryAddParam, @TokenToAdminUser AdminUserToken adminUserToken){
         logger.info("adminUser GoodsCategory api, adminUserId={}",adminUserToken.getUserId());
          if (goodsCategoryService.saveCategory(categoryAddParam)){
              return ResultGenerator.getSuccessResult();
@@ -66,7 +66,7 @@ public class AdminGoodsCategoryController {
     }
 
     @PutMapping("/categories")
-    public Result updateCategory(@RequestBody @Valid CategoryEditParam editParam, @TokenToAdminUser AdminUserToken adminUserToken){
+    public Result<String> updateCategory(@RequestBody @Valid CategoryEditParam editParam, @TokenToAdminUser AdminUserToken adminUserToken){
         logger.info("adminUser GoodsCategory api, adminUserId={}",adminUserToken.getUserId());
         if(goodsCategoryService.updateCategory(editParam)){
             return ResultGenerator.getSuccessResult();
@@ -76,7 +76,7 @@ public class AdminGoodsCategoryController {
     }
 
     @DeleteMapping("/categories")
-    public Result deleteCategory(@RequestBody @Valid BatchIdParam idParam,@TokenToAdminUser AdminUserToken adminUserToken){
+    public Result<String> deleteCategory(@RequestBody @Valid BatchIdParam idParam,@TokenToAdminUser AdminUserToken adminUserToken){
         logger.info("adminUser GoodsCategory api, adminUserId={}",adminUserToken.getUserId());
         if (goodsCategoryService.removeCategory(idParam)){
             return ResultGenerator.getSuccessResult();

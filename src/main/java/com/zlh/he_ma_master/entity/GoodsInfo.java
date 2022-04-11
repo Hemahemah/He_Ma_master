@@ -73,7 +73,7 @@ public class GoodsInfo implements Serializable {
     private String tag;
 
     /**
-     * 商品状态 0-下架 1-上架
+     * 商品状态 1-下架 0-上架
      */
     private Integer goodSellStatus;
 

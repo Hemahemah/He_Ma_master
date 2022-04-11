@@ -7,12 +7,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
 import com.zlh.he_ma_master.api.admin.param.CategoryAddParam;
 import com.zlh.he_ma_master.api.admin.param.CategoryEditParam;
+import com.zlh.he_ma_master.api.mall.vo.MallIndexCategoryVO;
 import com.zlh.he_ma_master.common.HeMaException;
+import com.zlh.he_ma_master.common.MallCategoryLevelEnum;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
 import com.zlh.he_ma_master.entity.GoodsCategory;
 import com.zlh.he_ma_master.service.GoodsCategoryService;
 import com.zlh.he_ma_master.dao.GoodsCategoryMapper;
+import com.zlh.he_ma_master.utils.Constants;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 /**
 * @author lh
@@ -75,12 +80,18 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
         return updateById(updateCategory);
     }
 
-    // todo warn Transaction not enabled ??
+    /**
+     * todo warn Transaction not enabled ??
+      */
     @Override
     public boolean removeCategory(BatchIdParam idParam) {
         // 1. 如果不存在id参数,直接返回
         if (idParam.getIds().length == 0){
             return false;
+        }
+        List<GoodsCategory> goodsCategories = listByIds(Arrays.asList(idParam.getIds()));
+        if (CollectionUtils.isEmpty(goodsCategories)){
+            throw new HeMaException(ServiceResultEnum.GOODS_CATEGORY_ERROR.getResult());
         }
         QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("parent_id", Arrays.asList(idParam.getIds()));
@@ -93,6 +104,43 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
         removeCategory(batchIdParam);
         // 4. 删除标签
         return removeBatchByIds(Arrays.asList(idParam.getIds()));
+    }
+
+
+
+    @Override
+    public List<MallIndexCategoryVO> getCategoryForIndex() {
+        // 1. 获取分类
+        Page<GoodsCategory> categoryPage = getCategoryPage(1, Constants.INDEX_CATEGORY_NUMBER, MallCategoryLevelEnum.LEVEL_ONE.getLevel(), 0L);
+        List<MallIndexCategoryVO> mallIndexCategoryVos = new ArrayList<>();
+        categoryPage.getRecords().forEach(category -> {
+            MallIndexCategoryVO mallIndexCategoryVO = new MallIndexCategoryVO();
+            BeanUtils.copyProperties(category, mallIndexCategoryVO);
+            mallIndexCategoryVos.add(mallIndexCategoryVO);
+        });
+        return getChildrenCategories(mallIndexCategoryVos);
+    }
+
+    private List<MallIndexCategoryVO> getChildrenCategories(List<MallIndexCategoryVO> mallIndexCategoryVos){
+        mallIndexCategoryVos.forEach(mallIndexCategoryVO -> {
+            // 1. 是否存在子标签
+            QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("parent_id", mallIndexCategoryVO.getCategoryId());
+            // 2. 查询标签是否存在子标签
+            List<GoodsCategory> categoryList = list(queryWrapper);
+            if (!CollectionUtils.isEmpty(categoryList)){
+                // 3. 设置VO下的子VO
+                List<MallIndexCategoryVO> mallIndexCategoryVOList = new ArrayList<>();
+                categoryList.forEach(category -> {
+                    MallIndexCategoryVO mallIndexCategory = new MallIndexCategoryVO();
+                    BeanUtils.copyProperties(category, mallIndexCategory);
+                    mallIndexCategoryVOList.add(mallIndexCategory);
+                });
+                mallIndexCategoryVO.setChildrenCategories(mallIndexCategoryVOList);
+                getChildrenCategories(mallIndexCategoryVOList);
+            }
+        });
+        return mallIndexCategoryVos;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.zlh.he_ma_master.service;
 
+import com.zlh.he_ma_master.api.mall.param.MallUserRegisterParam;
 import com.zlh.he_ma_master.api.mall.param.MallUserUpdateParam;
 import com.zlh.he_ma_master.entity.MallUser;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -26,4 +27,11 @@ public interface MallUserService extends IService<MallUser> {
      * @return true 修改成功
      */
     boolean updateInfo(MallUserUpdateParam userUpdateParam, Long userId);
+
+    /**
+     * 注册
+     * @param registerParam 用户注册参数
+     * @return true 注册成功
+     */
+    boolean register(MallUserRegisterParam registerParam);
 }

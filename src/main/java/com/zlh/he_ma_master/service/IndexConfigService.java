@@ -3,8 +3,11 @@ package com.zlh.he_ma_master.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zlh.he_ma_master.api.admin.param.ConfigAddParam;
 import com.zlh.he_ma_master.api.admin.param.ConfigEditParam;
+import com.zlh.he_ma_master.api.mall.vo.MallIndexConfigGoodsVO;
 import com.zlh.he_ma_master.entity.IndexConfig;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
 * 首页配置管理模块
@@ -42,4 +45,12 @@ public interface IndexConfigService extends IService<IndexConfig> {
      * @return true 删除成功
      */
     boolean removeConfig(Long[] ids);
+
+    /**
+     * 获取首页商品
+     * @param type 首页配置类型
+     * @param indexGoodsHotNumber 商品数量
+     * @return 商品列表
+     */
+    List<MallIndexConfigGoodsVO> getConfigGoodsForIndex(int type, int indexGoodsHotNumber);
 }

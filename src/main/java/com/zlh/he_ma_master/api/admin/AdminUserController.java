@@ -17,6 +17,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
+/**
+ * @author lh
+ */
 @CrossOrigin
 @RestController
 @RequestMapping("/he_ma")

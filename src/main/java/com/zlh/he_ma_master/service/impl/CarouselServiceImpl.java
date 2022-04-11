@@ -1,17 +1,24 @@
 package com.zlh.he_ma_master.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zlh.he_ma_master.api.admin.param.CarouselAddParam;
 import com.zlh.he_ma_master.api.admin.param.CarouselEditParam;
+import com.zlh.he_ma_master.api.mall.vo.MallIndexCarouselVO;
+import com.zlh.he_ma_master.api.mall.vo.MallIndexInfoVO;
 import com.zlh.he_ma_master.common.HeMaException;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
 import com.zlh.he_ma_master.entity.Carousel;
 import com.zlh.he_ma_master.service.CarouselService;
 import com.zlh.he_ma_master.dao.CarouselMapper;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 /**
@@ -62,6 +69,19 @@ public class CarouselServiceImpl extends ServiceImpl<CarouselMapper, Carousel>
     @Override
     public boolean deleteCarousel(Long[] ids) {
         return removeBatchByIds(Arrays.asList(ids));
+    }
+
+    @Override
+    public List<MallIndexCarouselVO> getCarouselForIndex(int indexCarouselNumber) {
+        List<MallIndexCarouselVO> mallIndexCarouselVos = new ArrayList<>(indexCarouselNumber);
+        Page<Carousel> carouselPage = getCarouselPage(1, indexCarouselNumber);
+        List<Carousel> records = carouselPage.getRecords();
+        records.forEach(record->{
+            MallIndexCarouselVO mallIndexCarouselVO = new MallIndexCarouselVO();
+            BeanUtils.copyProperties(record, mallIndexCarouselVO);
+            mallIndexCarouselVos.add(mallIndexCarouselVO);
+        });
+        return mallIndexCarouselVos;
     }
 }
 

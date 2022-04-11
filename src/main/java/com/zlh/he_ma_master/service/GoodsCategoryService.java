@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
 import com.zlh.he_ma_master.api.admin.param.CategoryAddParam;
 import com.zlh.he_ma_master.api.admin.param.CategoryEditParam;
+import com.zlh.he_ma_master.api.mall.vo.MallIndexCategoryVO;
 import com.zlh.he_ma_master.entity.GoodsCategory;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
 * 商品分类服务模块
@@ -44,4 +47,11 @@ public interface GoodsCategoryService extends IService<GoodsCategory> {
      * @return true成功
      */
     boolean removeCategory(BatchIdParam idParam);
+
+    /**
+     * 商城首页分类显示
+     * @return 分类数据
+     */
+    List<MallIndexCategoryVO> getCategoryForIndex();
+
 }

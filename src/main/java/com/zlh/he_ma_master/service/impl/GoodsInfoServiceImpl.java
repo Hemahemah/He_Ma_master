@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
 import com.zlh.he_ma_master.api.admin.param.GoodAddParam;
 import com.zlh.he_ma_master.api.admin.param.GoodsEditParam;
+import com.zlh.he_ma_master.api.mall.vo.MallSearchGoodsVO;
+import com.zlh.he_ma_master.common.GoodsInfoEnum;
 import com.zlh.he_ma_master.common.HeMaException;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
 import com.zlh.he_ma_master.entity.GoodsCategory;
@@ -13,8 +15,11 @@ import com.zlh.he_ma_master.entity.GoodsInfo;
 import com.zlh.he_ma_master.service.GoodsCategoryService;
 import com.zlh.he_ma_master.service.GoodsInfoService;
 import com.zlh.he_ma_master.dao.GoodsInfoMapper;
+import com.zlh.he_ma_master.utils.Constants;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import javax.annotation.Resource;
 import java.util.*;
 
@@ -99,6 +104,7 @@ public class GoodsInfoServiceImpl extends ServiceImpl<GoodsInfoMapper, GoodsInfo
         if (info != null){
             throw new HeMaException(ServiceResultEnum.SAME_GOODS_EXIST.getResult());
         }
+        goodsInfo.setUpdateTime(new Date());
         return updateById(goodsInfo);
     }
 
@@ -114,6 +120,54 @@ public class GoodsInfoServiceImpl extends ServiceImpl<GoodsInfoMapper, GoodsInfo
         // 2. 更改商品状态
         goodsInfos.forEach((goodsInfo -> goodsInfo.setGoodSellStatus(sellStatus)));
         return updateBatchById(goodsInfos);
+    }
+
+    @Override
+    public Page<MallSearchGoodsVO> searchGoods(String keyword, Long goodsCategoryId, String orderBy, Integer pageNumber) {
+        QueryWrapper<GoodsInfo> queryWrapper = new QueryWrapper<>();
+        if (StringUtils.hasText(keyword)){
+            // 商品简介或商品名是否匹配
+            queryWrapper.nested(goodsInfoQueryWrapper ->
+                   goodsInfoQueryWrapper.like("good_intro", keyword.trim()).or().like("good_name", keyword.trim()));
+        }
+       if (goodsCategoryId != null){
+            //商品分类
+            queryWrapper.eq("good_category_id", goodsCategoryId);
+        }
+        if (StringUtils.hasText(orderBy)){
+            if (GoodsInfoEnum.GOODS_ORDER_NEW.getMessage().equals(orderBy)){
+                // 新品按商品id排序
+                queryWrapper.orderByDesc("good_id");
+            }else if (GoodsInfoEnum.GOODS_ORDER_PRICE.getMessage().equals(orderBy)){
+                // 价格按商品价格排序
+                queryWrapper.orderByAsc("selling_price");
+            }else {
+                // 按物品库存排序
+                queryWrapper.orderByDesc("stock_num");
+            }
+        }
+        // 上线的商品
+        queryWrapper.eq("good_sell_status",0);
+        Page<GoodsInfo> goodsInfoPage = new Page<>(pageNumber, Constants.GOODS_SEARCH_PAGE_LIMIT);
+        goodsInfoPage = page(goodsInfoPage, queryWrapper);
+        Page<MallSearchGoodsVO> searchGoodsVoPage = new Page<>();
+        //转换类型
+        BeanUtils.copyProperties(goodsInfoPage, searchGoodsVoPage);
+        List<MallSearchGoodsVO> mallSearchGoodsVoList = new ArrayList<>();
+        goodsInfoPage.getRecords().forEach(goodsInfo -> {
+            // 商品名称过长处理
+            if (goodsInfo.getGoodName().length() > Constants.NAME_MAX_LENGTH){
+                goodsInfo.setGoodName(goodsInfo.getGoodName().substring(0,30)+"...");
+            }
+            if (goodsInfo.getGoodIntro().length() > Constants.NAME_MAX_LENGTH){
+                goodsInfo.setGoodIntro(goodsInfo.getGoodIntro().substring(0,30)+"...");
+            }
+            MallSearchGoodsVO searchGoodsVo = new MallSearchGoodsVO();
+            BeanUtils.copyProperties(goodsInfo, searchGoodsVo);
+            mallSearchGoodsVoList.add(searchGoodsVo);
+        });
+        searchGoodsVoPage.setRecords(mallSearchGoodsVoList);
+        return searchGoodsVoPage;
     }
 
     private GoodsInfo copyProperties(Object obj){
