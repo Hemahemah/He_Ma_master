@@ -1,6 +1,7 @@
 package com.zlh.he_ma_master.api.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zlh.he_ma_master.api.mall.vo.MallGoodsInfoVO;
 import com.zlh.he_ma_master.api.mall.vo.MallSearchGoodsVO;
 import com.zlh.he_ma_master.config.annotation.TokenToMallUser;
 import com.zlh.he_ma_master.entity.MallUser;
@@ -10,11 +11,7 @@ import com.zlh.he_ma_master.utils.ResultGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 /**
@@ -47,5 +44,14 @@ public class MallGoodsController {
         return ResultGenerator.getSuccessResult(mallSearchGoodsVoPage);
     }
 
+    @GetMapping("/goods/detail/{goodId}")
+    public Result<MallGoodsInfoVO> getGoodsDetail(@PathVariable Long goodId, @TokenToMallUser MallUser mallUser){
+        logger.info("goods detail api,goodId={},userId={}", goodId, mallUser.getUserId());
+        if (goodId < 1){
+            return ResultGenerator.getFailResult("参数异常");
+        }
+        MallGoodsInfoVO mallGoodsInfoVo = goodsInfoService.getGoodsDetail(goodId);
+        return ResultGenerator.getSuccessResult(mallGoodsInfoVo);
+    }
 
 }

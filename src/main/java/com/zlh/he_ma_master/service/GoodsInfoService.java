@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
 import com.zlh.he_ma_master.api.admin.param.GoodAddParam;
 import com.zlh.he_ma_master.api.admin.param.GoodsEditParam;
+import com.zlh.he_ma_master.api.mall.vo.MallGoodsInfoVO;
 import com.zlh.he_ma_master.api.mall.vo.MallSearchGoodsVO;
 import com.zlh.he_ma_master.entity.GoodsInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -26,9 +27,9 @@ public interface GoodsInfoService extends IService<GoodsInfo> {
     Page<GoodsInfo> getGoodsPage(Integer pageNumber, Integer pageSize);
 
     /**
-     * 获取商品详情
+     * 获取商品信息
      * @param id 商品编号
-     * @return 商品详情
+     * @return 商品信息
      */
     Map<String, Object> getGoodInfo(Long id);
 
@@ -63,4 +64,11 @@ public interface GoodsInfoService extends IService<GoodsInfo> {
      * @return 商品信息
      */
     Page<MallSearchGoodsVO> searchGoods(String keyword, Long goodsCategoryId, String orderBy, Integer pageNumber);
+
+    /**
+     * 获取商品详情
+     * @param goodId 商品编号
+     * @return 商品详情
+     */
+    MallGoodsInfoVO getGoodsDetail(Long goodId);
 }

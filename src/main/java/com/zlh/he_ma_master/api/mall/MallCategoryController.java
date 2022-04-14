@@ -4,6 +4,8 @@ import com.zlh.he_ma_master.api.mall.vo.MallIndexCategoryVO;
 import com.zlh.he_ma_master.service.GoodsCategoryService;
 import com.zlh.he_ma_master.utils.Result;
 import com.zlh.he_ma_master.utils.ResultGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,8 @@ public class MallCategoryController {
     @Resource
     private GoodsCategoryService goodsCategoryService;
 
+
+
     @GetMapping("/categories")
     public Result<List<MallIndexCategoryVO>> getCategory(){
         List<MallIndexCategoryVO> mallIndexCategoryVos = goodsCategoryService.getCategoryForIndex();
@@ -30,6 +34,4 @@ public class MallCategoryController {
             return ResultGenerator.getSuccessResult(mallIndexCategoryVos);
         }
     }
-
-
 }

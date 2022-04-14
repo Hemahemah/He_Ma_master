@@ -106,6 +106,15 @@ public enum ServiceResultEnum {
      */
     SAME_LOGIN_NAME_EXIST("手机号已被注册！"),
 
+
+    /**
+     * 购物车商品存在信息
+     */
+    CART_ITEM_EXIST_ERROR("已存在！无需重复添加！"),
+
+    /**
+     * 用户简介信息
+     */
     USER_INTRO("暂无简介"),
     ;
 

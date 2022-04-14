@@ -82,4 +82,5 @@ public class Constants {
     public final static int GOODS_SEARCH_PAGE_LIMIT = 10;
 
 
+
 }

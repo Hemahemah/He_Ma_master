@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
 import com.zlh.he_ma_master.api.admin.param.GoodAddParam;
 import com.zlh.he_ma_master.api.admin.param.GoodsEditParam;
+import com.zlh.he_ma_master.api.mall.vo.MallGoodsInfoVO;
 import com.zlh.he_ma_master.api.mall.vo.MallSearchGoodsVO;
 import com.zlh.he_ma_master.common.GoodsInfoEnum;
 import com.zlh.he_ma_master.common.HeMaException;
+import com.zlh.he_ma_master.common.MallCategoryLevelEnum;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
 import com.zlh.he_ma_master.entity.GoodsCategory;
 import com.zlh.he_ma_master.entity.GoodsInfo;
@@ -19,7 +21,6 @@ import com.zlh.he_ma_master.utils.Constants;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import javax.annotation.Resource;
 import java.util.*;
 
@@ -70,7 +71,7 @@ public class GoodsInfoServiceImpl extends ServiceImpl<GoodsInfoMapper, GoodsInfo
         GoodsInfo goodsInfo = copyProperties(goodAddParam);
         GoodsCategory category = categoryService.getById(goodsInfo.getGoodCategoryId());
         // 1. 校验分类是否为三级分类
-        if (category == null || category.getCategoryLevel() != 3){
+        if (category == null || category.getCategoryLevel() != MallCategoryLevelEnum.LEVEL_THREE.getLevel()){
             throw new HeMaException(ServiceResultEnum.GOODS_CATEGORY_ERROR.getResult());
         }
         // 2. 判断相同分类下是否有相同商品
@@ -88,7 +89,7 @@ public class GoodsInfoServiceImpl extends ServiceImpl<GoodsInfoMapper, GoodsInfo
         GoodsInfo goodsInfo = copyProperties(editParam);
         GoodsCategory category = categoryService.getById(goodsInfo.getGoodCategoryId());
         // 1. 校验分类是否为三级分类
-        if (category == null || category.getCategoryLevel() != 3){
+        if (category == null || category.getCategoryLevel() != MallCategoryLevelEnum.LEVEL_THREE.getLevel()){
             throw new HeMaException(ServiceResultEnum.GOODS_CATEGORY_ERROR.getResult());
         }
         // 2. 查询是否存在该商品
@@ -147,7 +148,7 @@ public class GoodsInfoServiceImpl extends ServiceImpl<GoodsInfoMapper, GoodsInfo
             }
         }
         // 上线的商品
-        queryWrapper.eq("good_sell_status",0);
+        queryWrapper.eq("good_sell_status",Constants.SELL_STATUS_UP);
         Page<GoodsInfo> goodsInfoPage = new Page<>(pageNumber, Constants.GOODS_SEARCH_PAGE_LIMIT);
         goodsInfoPage = page(goodsInfoPage, queryWrapper);
         Page<MallSearchGoodsVO> searchGoodsVoPage = new Page<>();
@@ -168,6 +169,19 @@ public class GoodsInfoServiceImpl extends ServiceImpl<GoodsInfoMapper, GoodsInfo
         });
         searchGoodsVoPage.setRecords(mallSearchGoodsVoList);
         return searchGoodsVoPage;
+    }
+
+    @Override
+    public MallGoodsInfoVO getGoodsDetail(Long goodId) {
+        GoodsInfo goodsInfo = getById(goodId);
+        // 商品不存在或商品已下架
+        if (goodsInfo == null || Constants.SELL_STATUS_DOWN == goodsInfo.getGoodSellStatus()){
+            throw new HeMaException(ServiceResultEnum.GOODS_NOT_EXIST.getResult());
+        }
+        MallGoodsInfoVO mallGoodsInfoVO = new MallGoodsInfoVO();
+        BeanUtils.copyProperties(goodsInfo, mallGoodsInfoVO);
+        mallGoodsInfoVO.setGoodsCarouselList(goodsInfo.getGoodCarousel().split(","));
+        return mallGoodsInfoVO;
     }
 
     private GoodsInfo copyProperties(Object obj){

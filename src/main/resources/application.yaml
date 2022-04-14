@@ -18,6 +18,9 @@ spring:
         login-username: admin
         login-password: zxc85167518
         reset-enable: false
+  servlet:
+    multipart:
+      max-file-size: 15MB
 
 
 #mybatis-plus配置
@@ -25,7 +28,7 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     #日志查看sql
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       logic-not-delete-value: 0
