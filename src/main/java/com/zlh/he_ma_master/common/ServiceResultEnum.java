@@ -116,6 +116,11 @@ public enum ServiceResultEnum {
      * 用户简介信息
      */
     USER_INTRO("暂无简介"),
+
+    /**
+     * 用户无权限信息
+     */
+    NO_PERMISSION_ERROR("无权限！"),
     ;
 
     private String result;

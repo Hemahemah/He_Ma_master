@@ -3,6 +3,7 @@ package com.zlh.he_ma_master.api.mall.vo;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @author lh
@@ -20,6 +21,6 @@ public class MallShoppingCartItemVO implements Serializable {
 
     private String goodImg;
 
-    private Integer sellingPrice;
+    private BigDecimal sellingPrice;
 
 }

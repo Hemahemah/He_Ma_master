@@ -3,6 +3,8 @@ package com.zlh.he_ma_master.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zlh.he_ma_master.api.mall.param.SaveCartParam;
+import com.zlh.he_ma_master.api.mall.param.UpdateCartItemParam;
+import com.zlh.he_ma_master.api.mall.vo.MallShoppingCartItemVO;
 import com.zlh.he_ma_master.common.HeMaException;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
 import com.zlh.he_ma_master.entity.GoodsInfo;
@@ -13,7 +15,14 @@ import com.zlh.he_ma_master.dao.ShoppingCartItemMapper;
 import com.zlh.he_ma_master.utils.Constants;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
 * @author lh
@@ -46,7 +55,71 @@ public class ShoppingCartItemServiceImpl extends ServiceImpl<ShoppingCartItemMap
         ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
         BeanUtils.copyProperties(saveCartParam, shoppingCartItem);
         shoppingCartItem.setUserId(userId);
+        shoppingCartItem.setUpdateTime(new Date());
         return save(shoppingCartItem);
+    }
+
+    @Override
+    public List<MallShoppingCartItemVO> getCartItems(Long userId) {
+        QueryWrapper<ShoppingCartItem> queryWrapper = new QueryWrapper<>();
+        queryWrapper = queryWrapper.eq("user_id", userId);
+        List<MallShoppingCartItemVO> shoppingCartItemVos = new ArrayList<>();
+        List<ShoppingCartItem> itemList = list(queryWrapper);
+        // 购物车是否有商品
+        if (!CollectionUtils.isEmpty(itemList)){
+            List<Long> goodIds = itemList.stream().map(ShoppingCartItem::getGoodId).collect(Collectors.toList());
+            // 获取购物车中商品信息
+            List<GoodsInfo> goodsInfos = goodsInfoService.listByIds(goodIds);
+            // 类型转换
+            goodsInfos.forEach(goodsInfo -> {
+                MallShoppingCartItemVO mallShoppingCartItemVo = new MallShoppingCartItemVO();
+                BeanUtils.copyProperties(goodsInfo, mallShoppingCartItemVo);
+                Optional<ShoppingCartItem> first = itemList.stream().filter(item ->item.getGoodId().equals(mallShoppingCartItemVo.getGoodId())).findFirst();
+                BeanUtils.copyProperties(first.orElse(new ShoppingCartItem()), mallShoppingCartItemVo);
+                shoppingCartItemVos.add(mallShoppingCartItemVo);
+            });
+        }
+        return shoppingCartItemVos;
+    }
+
+    @Override
+    public boolean updateCartItem(UpdateCartItemParam updateCartItemParam, Long userId) {
+        // 1. 获取购物车记录
+        QueryWrapper<ShoppingCartItem> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("cart_item_id", updateCartItemParam.getCartItemId()).eq("user_id", userId);
+        ShoppingCartItem cartItem = getOne(queryWrapper);
+        if (cartItem == null){
+            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+        }
+        // 2. 校验用户id是否一致
+        if (!userId.equals(cartItem.getUserId())){
+            throw new HeMaException(ServiceResultEnum.NO_PERMISSION_ERROR.getResult());
+        }
+        //  若修改参数与原先一致则不执行修改操作
+        if (cartItem.getGoodCount().equals(updateCartItemParam.getGoodCount())){
+            return true;
+        }
+        // 3. 修改
+        cartItem.setGoodCount(updateCartItemParam.getGoodCount());
+        cartItem.setUpdateTime(new Date());
+        return updateById(cartItem);
+    }
+
+    @Override
+    public boolean deleteCartItem(Long shoppingCartItemId, Long userId) {
+        QueryWrapper<ShoppingCartItem> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("cart_item_id", shoppingCartItemId).eq("user_id", userId);
+        ShoppingCartItem cartItem = getOne(queryWrapper);
+        // 1. 校验购物车记录是否存在
+        if (cartItem == null){
+            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+        }
+        // 2. 校验用户id是否一致
+        if (!userId.equals(cartItem.getUserId())){
+            throw new HeMaException(ServiceResultEnum.NO_PERMISSION_ERROR.getResult());
+        }
+        cartItem.setUpdateTime(new Date());
+        return removeById(cartItem);
     }
 }
 
