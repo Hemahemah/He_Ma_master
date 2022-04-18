@@ -10,6 +10,7 @@ import com.zlh.he_ma_master.utils.Result;
 import com.zlh.he_ma_master.utils.ResultGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -65,6 +66,19 @@ public class MallShoppingCartController {
             return ResultGenerator.getSuccessResult();
         }else {
             return ResultGenerator.getFailResult("删除商品失败");
+        }
+    }
+
+    @GetMapping("/shop-cart/settle")
+    public Result<List<MallShoppingCartItemVO>> getCartItemsForSettle(@RequestParam Long[] cartItemIds, @TokenToMallUser MallUser mallUser){
+        if (cartItemIds.length < 1){
+            return ResultGenerator.getFailResult("参数异常");
+        }
+        List<MallShoppingCartItemVO> mallShoppingCartItemVoList = shoppingCartItemService.getCartItemsForSettle(cartItemIds, mallUser.getUserId());
+        if (CollectionUtils.isEmpty(mallShoppingCartItemVoList)){
+            return ResultGenerator.getFailResult("获取信息失败");
+        }else {
+            return ResultGenerator.getSuccessResult(mallShoppingCartItemVoList);
         }
     }
 }

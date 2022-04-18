@@ -44,4 +44,12 @@ public interface ShoppingCartItemService extends IService<ShoppingCartItem> {
      * @return true 删除成功
      */
     boolean deleteCartItem(Long shoppingCartItemId, Long userId);
+
+    /**
+     * 确认订单中获取购物车信息
+     * @param cartItemIds 购物车编号
+     * @param userId 用户Id
+     * @return 商品信息
+     */
+    List<MallShoppingCartItemVO> getCartItemsForSettle(Long[] cartItemIds, Long userId);
 }

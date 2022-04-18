@@ -121,6 +121,8 @@ public enum ServiceResultEnum {
      * 用户无权限信息
      */
     NO_PERMISSION_ERROR("无权限！"),
+
+    PHONE_ERROR(""),
     ;
 
     private String result;

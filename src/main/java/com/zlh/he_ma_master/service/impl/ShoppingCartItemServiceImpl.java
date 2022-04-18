@@ -16,12 +16,8 @@ import com.zlh.he_ma_master.utils.Constants;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -67,17 +63,7 @@ public class ShoppingCartItemServiceImpl extends ServiceImpl<ShoppingCartItemMap
         List<ShoppingCartItem> itemList = list(queryWrapper);
         // 购物车是否有商品
         if (!CollectionUtils.isEmpty(itemList)){
-            List<Long> goodIds = itemList.stream().map(ShoppingCartItem::getGoodId).collect(Collectors.toList());
-            // 获取购物车中商品信息
-            List<GoodsInfo> goodsInfos = goodsInfoService.listByIds(goodIds);
-            // 类型转换
-            goodsInfos.forEach(goodsInfo -> {
-                MallShoppingCartItemVO mallShoppingCartItemVo = new MallShoppingCartItemVO();
-                BeanUtils.copyProperties(goodsInfo, mallShoppingCartItemVo);
-                Optional<ShoppingCartItem> first = itemList.stream().filter(item ->item.getGoodId().equals(mallShoppingCartItemVo.getGoodId())).findFirst();
-                BeanUtils.copyProperties(first.orElse(new ShoppingCartItem()), mallShoppingCartItemVo);
-                shoppingCartItemVos.add(mallShoppingCartItemVo);
-            });
+            getMallShoppingCartItemVOList(itemList, shoppingCartItemVos);
         }
         return shoppingCartItemVos;
     }
@@ -120,6 +106,41 @@ public class ShoppingCartItemServiceImpl extends ServiceImpl<ShoppingCartItemMap
         }
         cartItem.setUpdateTime(new Date());
         return removeById(cartItem);
+    }
+
+    @Override
+    public List<MallShoppingCartItemVO> getCartItemsForSettle(Long[] cartItemIds, Long userId) {
+        QueryWrapper<ShoppingCartItem> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId).in("cart_item_id", Arrays.asList(cartItemIds));
+        List<ShoppingCartItem> itemList = list(queryWrapper);
+        if (CollectionUtils.isEmpty(itemList)){
+            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+        }
+        if (cartItemIds.length != itemList.size()){
+            throw new HeMaException(ServiceResultEnum.PARAM_EXCEPTION.getResult());
+        }
+        List<MallShoppingCartItemVO> shoppingCartItemVos = new ArrayList<>();
+        getMallShoppingCartItemVOList(itemList, shoppingCartItemVos);
+        return shoppingCartItemVos;
+    }
+
+    /**
+     * 类型转换 将 ShoppingCartItem 转换为 MallShoppingCartItemVO
+     * @param itemList ShoppingCartItem
+     * @param shoppingCartItemVos MallShoppingCartItemVO
+     */
+    private void getMallShoppingCartItemVOList(List<ShoppingCartItem> itemList, List<MallShoppingCartItemVO> shoppingCartItemVos){
+        List<Long> goodIds = itemList.stream().map(ShoppingCartItem::getGoodId).collect(Collectors.toList());
+        // 获取购物车中商品信息
+        List<GoodsInfo> goodsInfos = goodsInfoService.listByIds(goodIds);
+        // 类型转换
+        goodsInfos.forEach(goodsInfo -> {
+            MallShoppingCartItemVO mallShoppingCartItemVo = new MallShoppingCartItemVO();
+            BeanUtils.copyProperties(goodsInfo, mallShoppingCartItemVo);
+            Optional<ShoppingCartItem> first = itemList.stream().filter(item ->item.getGoodId().equals(mallShoppingCartItemVo.getGoodId())).findFirst();
+            BeanUtils.copyProperties(first.orElse(new ShoppingCartItem()), mallShoppingCartItemVo);
+            shoppingCartItemVos.add(mallShoppingCartItemVo);
+        });
     }
 }
 

@@ -1,5 +1,7 @@
 package com.zlh.he_ma_master.service;
 
+import com.zlh.he_ma_master.api.mall.param.SaveOrderParam;
+import com.zlh.he_ma_master.entity.MallUser;
 import com.zlh.he_ma_master.entity.Order;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -9,4 +11,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface OrderService extends IService<Order> {
 
+    /**
+     * 生成订单
+     * @param saveOrderParam 订单参数
+     * @param mallUser 用户信息
+     * @return 订单号
+     */
+    String saveOrder(SaveOrderParam saveOrderParam, MallUser mallUser);
 }
