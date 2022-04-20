@@ -11,6 +11,7 @@ import lombok.Data;
 
 /**
  *
+ * @author lh
  * @TableName goods_info
  */
 @TableName(value ="goods_info")

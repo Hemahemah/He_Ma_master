@@ -122,7 +122,40 @@ public enum ServiceResultEnum {
      */
     NO_PERMISSION_ERROR("无权限！"),
 
-    PHONE_ERROR(""),
+    /**
+     * 商品下架信息
+     */
+    GOODS_STATUS_DOWN("商品已下架"),
+
+    /**
+     * 购物车数据异常信息
+     */
+    SHOPPING_ITEM_ERROR("购物车数据异常！"),
+
+    /**
+     * 商品库存不足信息
+     */
+    SHOPPING_ITEM_COUNT_ERROR("库存不足！"),
+
+    /**
+     * 商品数据异常信息
+     */
+    GOODS_ITEM_ERROR("商品数据异常!"),
+
+    /**
+     * 订单价格异常信息
+     */
+    ORDER_PRICE_ERROR("订单价格异常！"),
+
+    /**
+     * 订单状态异常信息
+     */
+    ORDER_STATUS_ERROR("订单状态异常！"),
+
+    /**
+     * 生成订单异常信息
+     */
+    SAVE_ORDER_ERROR("生成订单异常"),
     ;
 
     private String result;

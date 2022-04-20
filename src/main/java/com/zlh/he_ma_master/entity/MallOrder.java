@@ -12,11 +12,11 @@ import lombok.Data;
 /**
  *
  * @author lh
- * @TableName order
+ * @TableName mall_order
  */
-@TableName(value ="order")
+@TableName(value ="mall_order")
 @Data
-public class Order implements Serializable {
+public class MallOrder implements Serializable {
     /**
      *  订单主键id
      */
@@ -95,7 +95,7 @@ public class Order implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        Order other = (Order) that;
+        MallOrder other = (MallOrder) that;
         return (this.getOrderId() == null ? other.getOrderId() == null : this.getOrderId().equals(other.getOrderId()))
             && (this.getOrderNo() == null ? other.getOrderNo() == null : this.getOrderNo().equals(other.getOrderNo()))
             && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))

@@ -1,12 +1,11 @@
 package com.zlh.he_ma_master.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -21,7 +20,7 @@ public class OrderItem implements Serializable {
     /**
      * 订单项主键id
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long orderItemId;
 
     /**
@@ -32,17 +31,17 @@ public class OrderItem implements Serializable {
     /**
      * 关联商品id
      */
-    private Long goodsId;
+    private Long goodId;
 
     /**
      * 下单时的商品名称
      */
-    private String goodsName;
+    private String goodName;
 
     /**
      * 下单时商品主图
      */
-    private String goodsCoverImg;
+    private String goodImg;
 
     /**
      * 下单时商品价格
@@ -52,7 +51,7 @@ public class OrderItem implements Serializable {
     /**
      * 数量
      */
-    private Integer goodsCount;
+    private Integer goodCount;
 
     /**
      * 是否删除 0 未删除
@@ -63,13 +62,13 @@ public class OrderItem implements Serializable {
     /**
      * 创建时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
     /**
      * 修改时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
     @TableField(exist = false)
@@ -89,11 +88,11 @@ public class OrderItem implements Serializable {
         OrderItem other = (OrderItem) that;
         return (this.getOrderItemId() == null ? other.getOrderItemId() == null : this.getOrderItemId().equals(other.getOrderItemId()))
             && (this.getOrderId() == null ? other.getOrderId() == null : this.getOrderId().equals(other.getOrderId()))
-            && (this.getGoodsId() == null ? other.getGoodsId() == null : this.getGoodsId().equals(other.getGoodsId()))
-            && (this.getGoodsName() == null ? other.getGoodsName() == null : this.getGoodsName().equals(other.getGoodsName()))
-            && (this.getGoodsCoverImg() == null ? other.getGoodsCoverImg() == null : this.getGoodsCoverImg().equals(other.getGoodsCoverImg()))
+            && (this.getGoodId() == null ? other.getGoodId() == null : this.getGoodId().equals(other.getGoodId()))
+            && (this.getGoodName() == null ? other.getGoodName() == null : this.getGoodName().equals(other.getGoodName()))
+            && (this.getGoodImg() == null ? other.getGoodImg() == null : this.getGoodImg().equals(other.getGoodImg()))
             && (this.getSellingPrice() == null ? other.getSellingPrice() == null : this.getSellingPrice().equals(other.getSellingPrice()))
-            && (this.getGoodsCount() == null ? other.getGoodsCount() == null : this.getGoodsCount().equals(other.getGoodsCount()))
+            && (this.getGoodCount() == null ? other.getGoodCount() == null : this.getGoodCount().equals(other.getGoodCount()))
             && (this.getIsDeleted() == null ? other.getIsDeleted() == null : this.getIsDeleted().equals(other.getIsDeleted()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
@@ -105,11 +104,11 @@ public class OrderItem implements Serializable {
         int result = 1;
         result = prime * result + ((getOrderItemId() == null) ? 0 : getOrderItemId().hashCode());
         result = prime * result + ((getOrderId() == null) ? 0 : getOrderId().hashCode());
-        result = prime * result + ((getGoodsId() == null) ? 0 : getGoodsId().hashCode());
-        result = prime * result + ((getGoodsName() == null) ? 0 : getGoodsName().hashCode());
-        result = prime * result + ((getGoodsCoverImg() == null) ? 0 : getGoodsCoverImg().hashCode());
+        result = prime * result + ((getGoodId() == null) ? 0 : getGoodId().hashCode());
+        result = prime * result + ((getGoodName() == null) ? 0 : getGoodName().hashCode());
+        result = prime * result + ((getGoodImg() == null) ? 0 : getGoodImg().hashCode());
         result = prime * result + ((getSellingPrice() == null) ? 0 : getSellingPrice().hashCode());
-        result = prime * result + ((getGoodsCount() == null) ? 0 : getGoodsCount().hashCode());
+        result = prime * result + ((getGoodCount() == null) ? 0 : getGoodCount().hashCode());
         result = prime * result + ((getIsDeleted() == null) ? 0 : getIsDeleted().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
@@ -124,11 +123,11 @@ public class OrderItem implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", orderItemId=").append(orderItemId);
         sb.append(", orderId=").append(orderId);
-        sb.append(", goodsId=").append(goodsId);
-        sb.append(", goodsName=").append(goodsName);
-        sb.append(", goodsCoverImg=").append(goodsCoverImg);
+        sb.append(", goodId=").append(goodId);
+        sb.append(", goodName=").append(goodName);
+        sb.append(", goodImg=").append(goodImg);
         sb.append(", sellingPrice=").append(sellingPrice);
-        sb.append(", goodsCount=").append(goodsCount);
+        sb.append(", goodCount=").append(goodCount);
         sb.append(", isDeleted=").append(isDeleted);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);

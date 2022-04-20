@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service;
 
 /**
 * @author lh
-* @createDate 2022-04-04 21:35:41
+* @description 针对表【order_item】的数据库操作Service实现
+* @createDate 2022-04-19 20:11:36
 */
 @Service
 public class OrderItemServiceImpl extends ServiceImpl<OrderItemMapper, OrderItem>

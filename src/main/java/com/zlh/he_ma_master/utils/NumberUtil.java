@@ -1,5 +1,7 @@
 package com.zlh.he_ma_master.utils;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,5 +15,11 @@ public class NumberUtil {
     public static boolean isPhone(String loginName){
         Matcher matcher = PHONE_PATTERN.matcher(loginName);
         return matcher.matches();
+    }
+
+    public static String getOrderNo(){
+        String orderId = String.valueOf(System.currentTimeMillis());
+        int num = EncryptUtil.genRandomNum(4);
+        return orderId + num;
     }
 }

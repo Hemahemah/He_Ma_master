@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
 * @author lh
-* @createDate 2022-04-04 21:35:41
+* @createDate 2022-04-19 20:11:36
 */
 public interface OrderItemMapper extends BaseMapper<OrderItem> {
 

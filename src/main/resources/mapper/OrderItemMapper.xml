@@ -7,20 +7,20 @@
     <resultMap id="BaseResultMap" type="com.zlh.he_ma_master.entity.OrderItem">
             <id property="orderItemId" column="order_item_id" jdbcType="BIGINT"/>
             <result property="orderId" column="order_id" jdbcType="BIGINT"/>
-            <result property="goodsId" column="goods_id" jdbcType="BIGINT"/>
-            <result property="goodsName" column="goods_name" jdbcType="VARCHAR"/>
-            <result property="goodsCoverImg" column="goods_cover_img" jdbcType="VARCHAR"/>
+            <result property="goodId" column="good_id" jdbcType="BIGINT"/>
+            <result property="goodName" column="good_name" jdbcType="VARCHAR"/>
+            <result property="goodImg" column="good_img" jdbcType="VARCHAR"/>
             <result property="sellingPrice" column="selling_price" jdbcType="DECIMAL"/>
-            <result property="goodsCount" column="goods_count" jdbcType="INTEGER"/>
+            <result property="goodCount" column="good_count" jdbcType="INTEGER"/>
             <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        order_item_id,order_id,goods_id,
-        goods_name,goods_cover_img,selling_price,
-        goods_count,is_deleted,create_time,
+        order_item_id,order_id,good_id,
+        good_name,good_img,selling_price,
+        good_count,is_deleted,create_time,
         update_time
     </sql>
 </mapper>
