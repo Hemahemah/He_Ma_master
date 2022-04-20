@@ -135,7 +135,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         mallOrderPage.getRecords().forEach(mallOrder -> {
             MallOrderListVO mallOrderListVo = new MallOrderListVO();
             BeanUtils.copyProperties(mallOrder, mallOrderListVo);
-            mallOrderListVo.setOrderStatusString(MallOrderStatusEnum.getOrderStatusByStatus(status).getName());
+            mallOrderListVo.setOrderStatusString(Objects.requireNonNull(MallOrderStatusEnum.getOrderStatusByStatus(status)).getName());
             mallOrderListVoList.add(mallOrderListVo);
             orderIdList.add(mallOrder.getOrderId());
         });
