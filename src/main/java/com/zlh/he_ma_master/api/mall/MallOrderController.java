@@ -2,6 +2,8 @@ package com.zlh.he_ma_master.api.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zlh.he_ma_master.api.mall.param.SaveOrderParam;
+import com.zlh.he_ma_master.api.mall.vo.MallOrderDetailVO;
+import com.zlh.he_ma_master.api.mall.vo.MallOrderItemVO;
 import com.zlh.he_ma_master.api.mall.vo.MallOrderListVO;
 import com.zlh.he_ma_master.config.annotation.TokenToMallUser;
 import com.zlh.he_ma_master.entity.MallOrder;
@@ -52,14 +54,30 @@ public class MallOrderController {
     }
 
     @GetMapping("/order")
-    public Result getOrderList(@RequestParam(required = false) Integer pageNumber,
-                               @RequestParam(required = false) int status,
+    public Result<Page<MallOrderListVO>> getOrderList(@RequestParam(required = false) Integer pageNumber,
+                               @RequestParam(required = false) Integer status,
                                @TokenToMallUser MallUser mallUser){
+        logger.info("get order list api,user={}", mallUser.getUserId());
         if (pageNumber == null || pageNumber < 1){
             pageNumber = 1;
         }
         Page<MallOrderListVO> mallOrderListVoPage =  mallOrderService.getOrderList(pageNumber, status, mallUser.getUserId());
-        return null;
+        if (mallOrderListVoPage != null){
+            return ResultGenerator.getSuccessResult(mallOrderListVoPage);
+        }else {
+            return ResultGenerator.getFailResult("获取订单异常!");
+        }
+    }
+
+    @GetMapping("/order/{orderNo}")
+    public Result<MallOrderDetailVO> getOrderDetail(@PathVariable String orderNo, @TokenToMallUser MallUser mallUser){
+        logger.info("get order detail api,user={}", mallUser.getUserId());
+        MallOrderDetailVO mallOrderDetailVO = mallOrderService.getOrderDetail(orderNo, mallUser.getUserId());
+        if (mallOrderDetailVO != null){
+            return ResultGenerator.getSuccessResult(mallOrderDetailVO);
+        }else {
+            return ResultGenerator.getFailResult("获取订单详情异常!");
+        }
     }
 
 }

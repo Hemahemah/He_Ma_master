@@ -2,6 +2,7 @@ package com.zlh.he_ma_master.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zlh.he_ma_master.api.mall.param.SaveOrderParam;
+import com.zlh.he_ma_master.api.mall.vo.MallOrderDetailVO;
 import com.zlh.he_ma_master.api.mall.vo.MallOrderListVO;
 import com.zlh.he_ma_master.entity.MallOrder;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -37,5 +38,13 @@ public interface MallOrderService extends IService<MallOrder> {
      * @param userId 用户编号
      * @return page
      */
-    Page<MallOrderListVO> getOrderList(Integer pageNumber, int status, Long userId);
+    Page<MallOrderListVO> getOrderList(Integer pageNumber, Integer status, Long userId);
+
+    /**
+     * 获取订单详情
+     * @param orderNo 订单号
+     * @param userId 用户编号
+     * @return MallOrderDetailVO
+     */
+    MallOrderDetailVO getOrderDetail(String orderNo, Long userId);
 }
