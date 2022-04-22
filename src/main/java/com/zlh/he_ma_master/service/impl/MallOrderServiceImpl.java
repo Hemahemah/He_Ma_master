@@ -17,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
@@ -188,6 +189,79 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         return mallOrderDetailVO;
     }
 
+    @Override
+    public boolean finishOrder(String orderNo, Long userId) {
+        // 1. 查询订单
+        QueryWrapper<MallOrder> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("order_no", orderNo).eq("user_id", userId);
+        MallOrder mallOrder = getOne(queryWrapper);
+        // 2. 校验订单状态
+        if (mallOrder == null){
+            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+        }
+        if (mallOrder.getOrderStatus() != MallOrderStatusEnum.ORDER_EXPRESS.getOrderStatus()){
+            throw new HeMaException(ServiceResultEnum.ORDER_STATUS_ERROR.getResult());
+        }
+        // 3. 更改订单状态
+        mallOrder.setOrderStatus(MallOrderStatusEnum.ORDER_SUCCESS.getOrderStatus());
+        mallOrder.setUpdateTime(new Date());
+        return updateById(mallOrder);
+    }
+
+    @Override
+    public boolean cancelOrder(String orderNo, Long userId) {
+        // 1. 查询订单
+        QueryWrapper<MallOrder> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("order_no", orderNo).eq("user_id", userId);
+        MallOrder mallOrder = getOne(queryWrapper);
+        // 2. 校验订单状态
+        if (mallOrder == null){
+            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+        }
+       if (mallOrder.getOrderStatus() == MallOrderStatusEnum.ORDER_SUCCESS.getOrderStatus() ||
+               mallOrder.getOrderStatus() == MallOrderStatusEnum.ORDER_CLOSED_BY_USER.getOrderStatus() ||
+               mallOrder.getOrderStatus() == MallOrderStatusEnum.ORDER_CLOSED_BY_EXPIRED.getOrderStatus() ||
+               mallOrder.getOrderStatus() == MallOrderStatusEnum.ORDER_CLOSED_BY_JUDGE.getOrderStatus()){
+            throw new HeMaException(ServiceResultEnum.ORDER_STATUS_ERROR.getResult());
+       }
+       // 3. 修改订单状态
+        mallOrder.setOrderStatus(MallOrderStatusEnum.ORDER_CLOSED_BY_USER.getOrderStatus());
+        mallOrder.setUpdateTime(new Date());
+        return updateById(mallOrder);
+    }
+
+    @Override
+    public Page<MallOrderListVO> getOrderPage(Integer pageNumber, Integer pageSize, String orderNo, Integer orderStatus) {
+        QueryWrapper<MallOrder> queryWrapper = new QueryWrapper<>();
+        if (StringUtils.hasText(orderNo)){
+            queryWrapper.eq("order_no", orderNo);
+        }
+        if(orderStatus != null){
+            queryWrapper.eq("order_status", orderStatus);
+        }
+        Page<MallOrder> mallOrderPage = page(new Page<>(pageNumber, pageSize), queryWrapper);
+        Page<MallOrderListVO> mallOrderListVoPage = new Page<>(pageNumber, pageSize);
+        List<MallOrderListVO> mallOrderListVoList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(mallOrderPage.getRecords())){
+            mallOrderPage.getRecords().forEach(mallOrder -> {
+                MallOrderListVO mallOrderListVo = new MallOrderListVO();
+                BeanUtils.copyProperties(mallOrder, mallOrderListVo);
+                mallOrderListVo.setOrderStatusString(Objects.requireNonNull(MallOrderStatusEnum.getOrderStatusByStatus(mallOrder.getOrderStatus())).getName());
+                mallOrderListVoList.add(mallOrderListVo);
+            });
+        }
+        mallOrderListVoPage.setRecords(mallOrderListVoList);
+        return mallOrderListVoPage;
+    }
+
+    @Override
+    public MallOrderDetailVO getOrderDetailByOrderId(Integer orderId) {
+        QueryWrapper<OrderItem> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("order_id", orderId);
+        // todo 查询并进行类型转换
+        return null;
+    }
+
     /**
      * 订单生成校验
      * @param saveOrderParam 订单参数
@@ -241,6 +315,8 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         orderMap.put("userAddress", userAddress);
         return orderMap;
     }
+
+
 }
 
 

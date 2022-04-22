@@ -47,4 +47,37 @@ public interface MallOrderService extends IService<MallOrder> {
      * @return MallOrderDetailVO
      */
     MallOrderDetailVO getOrderDetail(String orderNo, Long userId);
+
+    /**
+     * 确认收货
+     * @param orderNo 订单号
+     * @param userId 用户编号
+     * @return true 收货成功
+     */
+    boolean finishOrder(String orderNo, Long userId);
+
+    /**
+     * 取消订单
+     * @param orderNo 订单号
+     * @param userId 用户编号
+     * @return true 取消订单成功
+     */
+    boolean cancelOrder(String orderNo, Long userId);
+
+    /**
+     * 后台分页
+     * @param pageNumber 页码
+     * @param pageSize 分页大小
+     * @param orderNo 订单号
+     * @param orderStatus 订单状态
+     * @return 分页信息
+     */
+    Page<MallOrderListVO> getOrderPage(Integer pageNumber, Integer pageSize, String orderNo, Integer orderStatus);
+
+    /**
+     * 后台获取订单详情
+     * @param orderId 订单编号
+     * @return MallOrderDetailVO
+     */
+    MallOrderDetailVO getOrderDetailByOrderId(Integer orderId);
 }

@@ -3,10 +3,8 @@ package com.zlh.he_ma_master.api.mall;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zlh.he_ma_master.api.mall.param.SaveOrderParam;
 import com.zlh.he_ma_master.api.mall.vo.MallOrderDetailVO;
-import com.zlh.he_ma_master.api.mall.vo.MallOrderItemVO;
 import com.zlh.he_ma_master.api.mall.vo.MallOrderListVO;
 import com.zlh.he_ma_master.config.annotation.TokenToMallUser;
-import com.zlh.he_ma_master.entity.MallOrder;
 import com.zlh.he_ma_master.entity.MallUser;
 import com.zlh.he_ma_master.service.MallOrderService;
 import com.zlh.he_ma_master.utils.Result;
@@ -80,4 +78,23 @@ public class MallOrderController {
         }
     }
 
+    @PutMapping("/order/{orderNo}/finish")
+    public Result<String> finishOrder(@PathVariable String orderNo, @TokenToMallUser MallUser mallUser){
+        logger.info("finish order api,user={}", mallUser.getUserId());
+        if (mallOrderService.finishOrder(orderNo, mallUser.getUserId())){
+            return ResultGenerator.getSuccessResult();
+        }else {
+            return ResultGenerator.getFailResult("确认订单失败!");
+        }
+    }
+
+    @PutMapping("/order/{orderNo}/cancel")
+    public Result<String> cancelOrder(@PathVariable String orderNo, @TokenToMallUser MallUser mallUser){
+        logger.info("cancel order api,user={}", mallUser.getUserId());
+        if (mallOrderService.cancelOrder(orderNo, mallUser.getUserId())){
+            return ResultGenerator.getSuccessResult();
+        }else {
+            return ResultGenerator.getFailResult("取消订单失败!");
+        }
+    }
 }
