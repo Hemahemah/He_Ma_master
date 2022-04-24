@@ -1,7 +1,9 @@
 package com.zlh.he_ma_master.service.impl;
+import java.util.Arrays;
 import java.util.Date;
-
+import java.util.List;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zlh.he_ma_master.api.mall.param.MallUserRegisterParam;
 import com.zlh.he_ma_master.api.mall.param.MallUserUpdateParam;
@@ -93,7 +95,22 @@ public class MallUserServiceImpl extends ServiceImpl<MallUserMapper, MallUser>
         return save(mallUser);
     }
 
+    @Override
+    public Page<MallUser> getUsersList(Integer pageNumber, Integer pageSize) {
+        return page(new Page<>(pageNumber, pageSize));
+    }
 
+    @Override
+    public boolean updateUserStatus(Integer lockStatus, Long[] ids) {
+        QueryWrapper<MallUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("user_id", Arrays.asList(ids));
+        List<MallUser> mallUsers = list(queryWrapper);
+        if (mallUsers.size() != ids.length){
+            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+        }
+        mallUsers.forEach(mallUser -> mallUser.setLockedFlag(lockStatus));
+        return updateBatchById(mallUsers);
+    }
 }
 
 

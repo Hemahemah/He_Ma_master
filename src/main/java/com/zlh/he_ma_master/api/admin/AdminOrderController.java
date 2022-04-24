@@ -1,6 +1,7 @@
 package com.zlh.he_ma_master.api.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
 import com.zlh.he_ma_master.api.mall.vo.MallOrderDetailVO;
 import com.zlh.he_ma_master.api.mall.vo.MallOrderListVO;
 import com.zlh.he_ma_master.config.annotation.TokenToAdminUser;
@@ -12,9 +13,7 @@ import com.zlh.he_ma_master.utils.ResultGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
-import javax.swing.plaf.PanelUI;
 
 /**
  * @author lh
@@ -47,13 +46,52 @@ public class AdminOrderController {
     }
 
     @GetMapping("/orders/{orderId}")
-    public Result getOrderDetail(@PathVariable Integer orderId, @TokenToAdminUser AdminUserToken adminUserToken){
+    public Result<MallOrderDetailVO> getOrderDetail(@PathVariable Integer orderId, @TokenToAdminUser AdminUserToken adminUserToken){
         logger.info("admin get order detail api,adminUser={}", adminUserToken.getUserId());
         MallOrderDetailVO mallOrderDetailVo = mallOrderService.getOrderDetailByOrderId(orderId);
         if (mallOrderDetailVo != null){
             return ResultGenerator.getSuccessResult(mallOrderDetailVo);
         }else {
             return ResultGenerator.getFailResult("获取订单详情失败!");
+        }
+    }
+
+    @PutMapping("/orders/checkDone")
+    public Result<String> checkDone(@RequestBody BatchIdParam idParam, @TokenToAdminUser AdminUserToken adminUserToken){
+        logger.info("admin check done order api,adminUser={}", adminUserToken.getUserId());
+        if (idParam.getIds().length <= 0){
+            return ResultGenerator.getFailResult("参数异常!");
+        }
+        if (mallOrderService.checkDone(idParam)){
+            return ResultGenerator.getSuccessResult();
+        }else {
+            return ResultGenerator.getFailResult("配货失败!");
+        }
+    }
+
+    @PutMapping("/orders/checkOut")
+    public Result<String> checkOut(@RequestBody BatchIdParam idParam, @TokenToAdminUser AdminUserToken adminUserToken){
+        logger.info("admin check out order api,adminUser={}", adminUserToken.getUserId());
+        if (idParam.getIds().length <= 0){
+            return ResultGenerator.getFailResult("参数异常!");
+        }
+        if (mallOrderService.checkOut(idParam)){
+            return ResultGenerator.getSuccessResult();
+        }else {
+            return ResultGenerator.getFailResult("配货失败!");
+        }
+    }
+
+    @PutMapping("/orders/close")
+    public Result<String> handleClose(@RequestBody BatchIdParam idParam, @TokenToAdminUser AdminUserToken adminUserToken){
+        logger.info("admin close order api,adminUser={}", adminUserToken.getUserId());
+        if (idParam.getIds().length <= 0){
+            return ResultGenerator.getFailResult("参数异常!");
+        }
+        if (mallOrderService.handleClose(idParam)){
+            return ResultGenerator.getSuccessResult();
+        }else {
+            return ResultGenerator.getFailResult("配货失败!");
         }
     }
 }

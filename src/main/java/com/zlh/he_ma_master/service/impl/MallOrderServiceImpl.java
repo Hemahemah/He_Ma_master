@@ -3,6 +3,7 @@ package com.zlh.he_ma_master.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
 import com.zlh.he_ma_master.api.mall.param.SaveOrderParam;
 import com.zlh.he_ma_master.api.mall.vo.MallOrderDetailVO;
 import com.zlh.he_ma_master.api.mall.vo.MallOrderItemVO;
@@ -164,29 +165,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     public MallOrderDetailVO getOrderDetail(String orderNo, Long userId) {
         QueryWrapper<MallOrder> orderQueryWrapper = new QueryWrapper<>();
         orderQueryWrapper.eq("order_no", orderNo).eq("user_id", userId);
-        MallOrder mallOrder = getOne(orderQueryWrapper);
-        if (mallOrder == null){
-            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
-        }
-        QueryWrapper<OrderItem> itemQueryWrapper = new QueryWrapper<>();
-        itemQueryWrapper.eq("order_id", mallOrder.getOrderId());
-        List<OrderItem> orderItems = orderItemService.list(itemQueryWrapper);
-        if (CollectionUtils.isEmpty(orderItems)){
-            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
-        }
-        //类型转换
-        MallOrderDetailVO mallOrderDetailVO = new MallOrderDetailVO();
-        List<MallOrderItemVO> mallOrderItemVoList = new ArrayList<>();
-        mallOrderDetailVO.setOrderStatusString(Objects.requireNonNull(MallOrderStatusEnum.getOrderStatusByStatus(mallOrder.getOrderStatus())).getName());
-        mallOrderDetailVO.setPayTypeString(Objects.requireNonNull(MallOrderPayTypeEnum.getOrderPayTypeByStatus(mallOrder.getPayStatus())).getName());
-        BeanUtils.copyProperties(mallOrder, mallOrderDetailVO);
-        orderItems.forEach(orderItem -> {
-            MallOrderItemVO mallOrderItemVO = new MallOrderItemVO();
-            BeanUtils.copyProperties(orderItem, mallOrderItemVO);
-            mallOrderItemVoList.add(mallOrderItemVO);
-        });
-        mallOrderDetailVO.setMallOrderItemVos(mallOrderItemVoList);
-        return mallOrderDetailVO;
+       return getMallOrderDetailVO(orderQueryWrapper);
     }
 
     @Override
@@ -256,10 +235,88 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
 
     @Override
     public MallOrderDetailVO getOrderDetailByOrderId(Integer orderId) {
-        QueryWrapper<OrderItem> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("order_id", orderId);
-        // todo 查询并进行类型转换
-        return null;
+        QueryWrapper<MallOrder> orderQueryWrapper = new QueryWrapper<>();
+        orderQueryWrapper.eq("order_id", orderId);
+        return getMallOrderDetailVO(orderQueryWrapper);
+    }
+
+    @Override
+    public boolean checkDone(BatchIdParam idParam) {
+        // 1. 获取订单
+        QueryWrapper<MallOrder> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("order_status", MallOrderStatusEnum.ORDER_PAID.getOrderStatus()).in("order_id", Arrays.asList(idParam.getIds()));
+        List<MallOrder> mallOrders = list(queryWrapper);
+        if (CollectionUtils.isEmpty(mallOrders) || mallOrders.size() != idParam.getIds().length){
+            throw new HeMaException(ServiceResultEnum.ORDER_STATUS_ERROR.getResult());
+        }
+        // 2. 修改状态
+        mallOrders.forEach(mallOrder -> mallOrder.setOrderStatus(MallOrderStatusEnum.ORDER_PACKAGED.getOrderStatus()));
+        return updateBatchById(mallOrders);
+    }
+
+    @Override
+    public boolean checkOut(BatchIdParam idParam) {
+        // 1. 获取订单
+        QueryWrapper<MallOrder> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("order_status", MallOrderStatusEnum.ORDER_PACKAGED.getOrderStatus()).in("order_id", Arrays.asList(idParam.getIds()));
+        List<MallOrder> mallOrders = list(queryWrapper);
+        if (CollectionUtils.isEmpty(mallOrders) || mallOrders.size() != idParam.getIds().length){
+            throw new HeMaException(ServiceResultEnum.ORDER_STATUS_ERROR.getResult());
+        }
+        // 2. 修改状态
+        mallOrders.forEach(mallOrder -> mallOrder.setOrderStatus(MallOrderStatusEnum.ORDER_EXPRESS.getOrderStatus()));
+        return updateBatchById(mallOrders);
+    }
+
+    @Override
+    public boolean handleClose(BatchIdParam idParam) {
+        // 1. 获取订单
+        QueryWrapper<MallOrder> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("order_id", Arrays.asList(idParam.getIds()));
+        List<MallOrder> mallOrders = list(queryWrapper);
+        if (CollectionUtils.isEmpty(mallOrders) || mallOrders.size() != idParam.getIds().length){
+            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+        }
+        mallOrders.forEach(mallOrder -> {
+            // 2. 校验订单状态(订单已关闭或已完成则无法关闭)
+            if (mallOrder.getOrderStatus() == MallOrderStatusEnum.ORDER_SUCCESS.getOrderStatus() || mallOrder.getOrderStatus() < 0){
+                throw new HeMaException(ServiceResultEnum.ORDER_STATUS_ERROR.getResult());
+            }
+            mallOrder.setOrderStatus(MallOrderStatusEnum.ORDER_CLOSED_BY_JUDGE.getOrderStatus());
+        });
+        // 2. 修改状态
+        return updateBatchById(mallOrders);
+    }
+
+    /**
+     * 根据queryWrapper获取订单详情
+     * @param orderQueryWrapper 查询参数
+     * @return MallOrderDetailVO
+     */
+    private MallOrderDetailVO getMallOrderDetailVO(QueryWrapper<MallOrder> orderQueryWrapper) {
+        MallOrder mallOrder = getOne(orderQueryWrapper);
+        if (mallOrder == null){
+            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+        }
+        QueryWrapper<OrderItem> itemQueryWrapper = new QueryWrapper<>();
+        itemQueryWrapper.eq("order_id", mallOrder.getOrderId());
+        List<OrderItem> orderItems = orderItemService.list(itemQueryWrapper);
+        if (CollectionUtils.isEmpty(orderItems)){
+            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+        }
+        //类型转换
+        MallOrderDetailVO mallOrderDetailVO = new MallOrderDetailVO();
+        List<MallOrderItemVO> mallOrderItemVoList = new ArrayList<>();
+        mallOrderDetailVO.setOrderStatusString(Objects.requireNonNull(MallOrderStatusEnum.getOrderStatusByStatus(mallOrder.getOrderStatus())).getName());
+        mallOrderDetailVO.setPayTypeString(Objects.requireNonNull(MallOrderPayTypeEnum.getOrderPayTypeByStatus(mallOrder.getPayStatus())).getName());
+        BeanUtils.copyProperties(mallOrder, mallOrderDetailVO);
+        orderItems.forEach(orderItem -> {
+            MallOrderItemVO mallOrderItemVO = new MallOrderItemVO();
+            BeanUtils.copyProperties(orderItem, mallOrderItemVO);
+            mallOrderItemVoList.add(mallOrderItemVO);
+        });
+        mallOrderDetailVO.setMallOrderItemVos(mallOrderItemVoList);
+        return mallOrderDetailVO;
     }
 
     /**

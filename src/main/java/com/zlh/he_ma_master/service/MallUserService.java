@@ -1,5 +1,6 @@
 package com.zlh.he_ma_master.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zlh.he_ma_master.api.mall.param.MallUserRegisterParam;
 import com.zlh.he_ma_master.api.mall.param.MallUserUpdateParam;
 import com.zlh.he_ma_master.entity.MallUser;
@@ -34,4 +35,20 @@ public interface MallUserService extends IService<MallUser> {
      * @return true 注册成功
      */
     boolean register(MallUserRegisterParam registerParam);
+
+    /**
+     * 后台获取用户信息
+     * @param pageNumber 页码
+     * @param pageSize 分页大小
+     * @return 用户列表
+     */
+    Page<MallUser> getUsersList(Integer pageNumber, Integer pageSize);
+
+    /**
+     * 修改用户状态
+     * @param lockStatus 用户状态
+     * @param ids 用户编号
+     * @return
+     */
+    boolean updateUserStatus(Integer lockStatus, Long[] ids);
 }

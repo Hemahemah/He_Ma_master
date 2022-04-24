@@ -92,6 +92,11 @@ public enum ServiceResultEnum {
     LOGIN_USER_LOCKED_ERROR("用户已被禁止登录！"),
 
     /**
+     * 用户状态异常
+     */
+    USER_STATUS_ERROR("用户状态异常"),
+
+    /**
      * token无效信息
      */
     TOKEN_EXPIRE_ERROR("无效认证！请重新登录！"),

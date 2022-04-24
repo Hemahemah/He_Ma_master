@@ -4,8 +4,6 @@ import com.zlh.he_ma_master.api.mall.vo.MallIndexCategoryVO;
 import com.zlh.he_ma_master.service.GoodsCategoryService;
 import com.zlh.he_ma_master.utils.Result;
 import com.zlh.he_ma_master.utils.ResultGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

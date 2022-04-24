@@ -107,6 +107,15 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
     }
 
 
+    public List<MallIndexCategoryVO> getCategory() {
+        return null;
+    }
+
+    private void getCategoryForTest(List<GoodsCategory> goodsCategories, List<MallIndexCategoryVO> mallIndexCategoryVos){
+
+    }
+
+
 
     @Override
     public List<MallIndexCategoryVO> getCategoryForIndex() {
@@ -120,6 +129,7 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
         });
         return getChildrenCategories(mallIndexCategoryVos);
     }
+
 
     private List<MallIndexCategoryVO> getChildrenCategories(List<MallIndexCategoryVO> mallIndexCategoryVos){
         mallIndexCategoryVos.forEach(mallIndexCategoryVO -> {

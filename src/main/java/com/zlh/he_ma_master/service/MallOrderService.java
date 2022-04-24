@@ -1,6 +1,7 @@
 package com.zlh.he_ma_master.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zlh.he_ma_master.api.admin.param.BatchIdParam;
 import com.zlh.he_ma_master.api.mall.param.SaveOrderParam;
 import com.zlh.he_ma_master.api.mall.vo.MallOrderDetailVO;
 import com.zlh.he_ma_master.api.mall.vo.MallOrderListVO;
@@ -80,4 +81,25 @@ public interface MallOrderService extends IService<MallOrder> {
      * @return MallOrderDetailVO
      */
     MallOrderDetailVO getOrderDetailByOrderId(Integer orderId);
+
+    /**
+     * 订单配货
+     * @param idParam 订单编号
+     * @return true 配货成功
+     */
+    boolean checkDone(BatchIdParam idParam);
+
+    /**
+     * 订单出库
+     * @param idParam 订单编号
+     * @return true 出库成功
+     */
+    boolean checkOut(BatchIdParam idParam);
+
+    /**
+     * 关闭订单
+     * @param idParam 订单编号
+     * @return true 关闭成功
+     */
+    boolean handleClose(BatchIdParam idParam);
 }
