@@ -36,10 +36,11 @@ public class HeMaExceptionHandler {
                     || ServiceResultEnum.ADMIN_EXPIRE_ERROR.getResult().equals(e.getMessage())
                     || ServiceResultEnum.ADMIN_PASSWORD_ERROR.getResult().equals(e.getMessage())){
                 result.setResultCode(419);
-                return result;
-            }else{
-                return result;
+            }else if (ServiceResultEnum.MALL_USER_NOT_LOGIN_ERROR.getResult().equals(e.getMessage())
+                    ||ServiceResultEnum.TOKEN_EXPIRE_ERROR.getResult().equals(e.getMessage())){
+                result.setResultCode(416);
             }
+            return result;
         }
         result.setMessage("未知异常,请查看控制台日志");
         e.printStackTrace();

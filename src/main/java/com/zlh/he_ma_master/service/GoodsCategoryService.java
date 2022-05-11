@@ -54,4 +54,6 @@ public interface GoodsCategoryService extends IService<GoodsCategory> {
      */
     List<MallIndexCategoryVO> getCategoryForIndex();
 
+
+
 }

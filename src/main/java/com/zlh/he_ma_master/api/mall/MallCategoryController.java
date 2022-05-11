@@ -32,4 +32,5 @@ public class MallCategoryController {
             return ResultGenerator.getSuccessResult(mallIndexCategoryVos);
         }
     }
+
 }

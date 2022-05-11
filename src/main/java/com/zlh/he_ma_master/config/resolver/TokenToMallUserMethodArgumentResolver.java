@@ -46,7 +46,7 @@ public class TokenToMallUserMethodArgumentResolver implements HandlerMethodArgum
             QueryWrapper<MallUserToken> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("token",token);
             MallUserToken userToken = mallUserTokenMapper.selectOne(queryWrapper);
-            if (userToken == null){
+            if (userToken == null || userToken.getExpireTime().getTime() < System.currentTimeMillis()){
                 throw new HeMaException(ServiceResultEnum.TOKEN_EXPIRE_ERROR.getResult());
             }
             // 2. 查询用户

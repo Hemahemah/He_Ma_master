@@ -5,6 +5,7 @@ import java.util.Objects;
 
 /**
  * 响应结果
+ * @author lh
  * @param <T>
  */
 public class Result<T> implements Serializable {
@@ -58,8 +59,12 @@ public class Result<T> implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Result<?> result = (Result<?>) o;
         return Objects.equals(message, result.message) && Objects.equals(data, result.data) && Objects.equals(resultCode, result.resultCode);
     }

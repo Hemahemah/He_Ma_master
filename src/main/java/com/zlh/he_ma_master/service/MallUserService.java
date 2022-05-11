@@ -48,7 +48,7 @@ public interface MallUserService extends IService<MallUser> {
      * 修改用户状态
      * @param lockStatus 用户状态
      * @param ids 用户编号
-     * @return
+     * @return true 修改成功
      */
     boolean updateUserStatus(Integer lockStatus, Long[] ids);
 }

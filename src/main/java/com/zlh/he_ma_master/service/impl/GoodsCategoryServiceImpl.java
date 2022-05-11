@@ -1,6 +1,7 @@
 package com.zlh.he_ma_master.service.impl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -9,12 +10,10 @@ import com.zlh.he_ma_master.api.admin.param.CategoryAddParam;
 import com.zlh.he_ma_master.api.admin.param.CategoryEditParam;
 import com.zlh.he_ma_master.api.mall.vo.MallIndexCategoryVO;
 import com.zlh.he_ma_master.common.HeMaException;
-import com.zlh.he_ma_master.common.MallCategoryLevelEnum;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
 import com.zlh.he_ma_master.entity.GoodsCategory;
 import com.zlh.he_ma_master.service.GoodsCategoryService;
 import com.zlh.he_ma_master.dao.GoodsCategoryMapper;
-import com.zlh.he_ma_master.utils.Constants;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -107,37 +106,25 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
     }
 
 
-    public List<MallIndexCategoryVO> getCategory() {
-        return null;
-    }
-
-    private void getCategoryForTest(List<GoodsCategory> goodsCategories, List<MallIndexCategoryVO> mallIndexCategoryVos){
-
-    }
-
-
-
     @Override
     public List<MallIndexCategoryVO> getCategoryForIndex() {
         // 1. 获取分类
-        Page<GoodsCategory> categoryPage = getCategoryPage(1, Constants.INDEX_CATEGORY_NUMBER, MallCategoryLevelEnum.LEVEL_ONE.getLevel(), 0L);
+        List<GoodsCategory> goodsCategories = list();
+        Map<Long, List<GoodsCategory>> longListMap = goodsCategories.stream().collect(Collectors.groupingBy(GoodsCategory::getParentId));
+        List<GoodsCategory> categories = longListMap.get(0L);
         List<MallIndexCategoryVO> mallIndexCategoryVos = new ArrayList<>();
-        categoryPage.getRecords().forEach(category -> {
+        categories.forEach(category -> {
             MallIndexCategoryVO mallIndexCategoryVO = new MallIndexCategoryVO();
             BeanUtils.copyProperties(category, mallIndexCategoryVO);
             mallIndexCategoryVos.add(mallIndexCategoryVO);
         });
-        return getChildrenCategories(mallIndexCategoryVos);
+        return getCategoryForTest(longListMap, mallIndexCategoryVos);
     }
 
-
-    private List<MallIndexCategoryVO> getChildrenCategories(List<MallIndexCategoryVO> mallIndexCategoryVos){
+    private List<MallIndexCategoryVO> getCategoryForTest(Map<Long, List<GoodsCategory>> categoryMap, List<MallIndexCategoryVO> mallIndexCategoryVos){
         mallIndexCategoryVos.forEach(mallIndexCategoryVO -> {
             // 1. 是否存在子标签
-            QueryWrapper<GoodsCategory> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("parent_id", mallIndexCategoryVO.getCategoryId());
-            // 2. 查询标签是否存在子标签
-            List<GoodsCategory> categoryList = list(queryWrapper);
+            List<GoodsCategory> categoryList = categoryMap.get(mallIndexCategoryVO.getCategoryId());
             if (!CollectionUtils.isEmpty(categoryList)){
                 // 3. 设置VO下的子VO
                 List<MallIndexCategoryVO> mallIndexCategoryVOList = new ArrayList<>();
@@ -147,12 +134,12 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
                     mallIndexCategoryVOList.add(mallIndexCategory);
                 });
                 mallIndexCategoryVO.setChildrenCategories(mallIndexCategoryVOList);
-                getChildrenCategories(mallIndexCategoryVOList);
+                getCategoryForTest(categoryMap, mallIndexCategoryVOList);
             }
         });
         return mallIndexCategoryVos;
-    }
 
+    }
 }
 
 
