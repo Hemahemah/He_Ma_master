@@ -15,7 +15,11 @@ import com.zlh.he_ma_master.service.IndexConfigService;
 import com.zlh.he_ma_master.dao.IndexConfigMapper;
 import com.zlh.he_ma_master.utils.Constants;
 import org.springframework.beans.BeanUtils;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
+import org.springframework.util.concurrent.ListenableFuture;
+
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,7 +100,8 @@ public class IndexConfigServiceImpl extends ServiceImpl<IndexConfigMapper, Index
     }
 
     @Override
-    public List<MallIndexConfigGoodsVO> getConfigGoodsForIndex(int type, int indexGoodsHotNumber) {
+    @Async("indexConfigServiceExecutor")
+    public ListenableFuture<List<MallIndexConfigGoodsVO>> getConfigGoodsForIndex(int type, int indexGoodsHotNumber) {
          List<MallIndexConfigGoodsVO> mallIndexConfigGoodsVos = new ArrayList<>(indexGoodsHotNumber);
         Page<IndexConfig> pages = getPages(1, indexGoodsHotNumber, type);
         // 1. 获取对应配置类型的商品id
@@ -115,7 +120,7 @@ public class IndexConfigServiceImpl extends ServiceImpl<IndexConfigMapper, Index
             }
             mallIndexConfigGoodsVos.add(indexConfigGoodsVO);
         });
-        return mallIndexConfigGoodsVos;
+        return AsyncResult.forValue(mallIndexConfigGoodsVos);
     }
 
     private IndexConfig copyProperties(Object obj){

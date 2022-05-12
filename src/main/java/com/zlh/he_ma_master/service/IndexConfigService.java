@@ -6,6 +6,7 @@ import com.zlh.he_ma_master.api.admin.param.ConfigEditParam;
 import com.zlh.he_ma_master.api.mall.vo.MallIndexConfigGoodsVO;
 import com.zlh.he_ma_master.entity.IndexConfig;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.util.concurrent.ListenableFuture;
 
 import java.util.List;
 
@@ -52,5 +53,5 @@ public interface IndexConfigService extends IService<IndexConfig> {
      * @param indexGoodsHotNumber 商品数量
      * @return 商品列表
      */
-    List<MallIndexConfigGoodsVO> getConfigGoodsForIndex(int type, int indexGoodsHotNumber);
+    ListenableFuture<List<MallIndexConfigGoodsVO>> getConfigGoodsForIndex(int type, int indexGoodsHotNumber);
 }
