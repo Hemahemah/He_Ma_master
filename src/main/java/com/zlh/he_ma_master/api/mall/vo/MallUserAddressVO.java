@@ -36,6 +36,11 @@ public class MallUserAddressVO implements Serializable {
     private String provinceName;
 
     /**
+     * 省市区编号
+     */
+    private String areaCode;
+
+    /**
      * 城
      */
     private String cityName;

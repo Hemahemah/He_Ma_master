@@ -15,6 +15,9 @@ public class MallUserAddressAddParam implements Serializable {
     @NotEmpty(message = "用户名不能为空")
     private String userName;
 
+    @NotEmpty(message = "省市区编号不能为空")
+    private String areaCode;
+
     @NotEmpty(message = "手机号不能为空")
     private String userPhone;
 

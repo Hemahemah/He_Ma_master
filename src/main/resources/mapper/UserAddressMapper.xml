@@ -17,12 +17,14 @@
             <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="areaCode" column="area_code" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         address_id,user_id,user_name,
         user_phone,province_name,city_name,
         region_name,detail_address,default_flag,
-        is_deleted,create_time,update_time
+        is_deleted,create_time,update_time,
+        area_code
     </sql>
 </mapper>

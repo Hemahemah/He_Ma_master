@@ -26,13 +26,13 @@ spring:
 
 pool:
  #核心线程池
- corePoolsize: 10
+ corePoolsize: 16
  #最大线程池
  maxPoolSize: 40
  #活跃时间
  keepAliveSeconds: 300
  #队列容量
- queueCapacity: 50
+ queueCapacity: 10
 
 
 #mybatis-plus配置

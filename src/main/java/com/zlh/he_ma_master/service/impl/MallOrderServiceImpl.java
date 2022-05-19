@@ -124,7 +124,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     public Page<MallOrderListVO> getOrderList(Integer pageNumber, Integer status, Long userId) {
         // 1. 获取订单
         QueryWrapper<MallOrder> orderQueryWrapper = new QueryWrapper<>();
-        orderQueryWrapper.eq("user_id", userId);
+        orderQueryWrapper.eq("user_id", userId).orderByDesc("create_time");
         if (status != null){
             orderQueryWrapper.eq("order_status", status);
         }
@@ -158,6 +158,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
                mallOrderListVO.getMallOrderItemVos().add(mallOrderItemVO);
            });
        }
+        mallOrderListVoPage.setSearchCount(mallOrderPage.hasNext());
         return mallOrderListVoPage;
     }
 

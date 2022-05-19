@@ -17,7 +17,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 @EnableAsync
 public class HeMaExecutorConfigurer {
 
-    private static final Logger logger = LoggerFactory.getLogger(HeMaExecutorConfigurer.class);
 
     @Resource
     private ThreadPoolConfig threadPoolConfig;
@@ -27,7 +26,6 @@ public class HeMaExecutorConfigurer {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         //配置核心线程数
         executor.setCorePoolSize(threadPoolConfig.getCorePoolSize());
-        logger.info("{}",threadPoolConfig.getCorePoolSize());
         //配置最大线程数
         executor.setMaxPoolSize(threadPoolConfig.getMaxPoolSize());
         //配置队列大小

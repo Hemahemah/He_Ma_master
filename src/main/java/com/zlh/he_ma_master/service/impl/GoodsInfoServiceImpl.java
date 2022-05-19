@@ -20,6 +20,7 @@ import com.zlh.he_ma_master.dao.GoodsInfoMapper;
 import com.zlh.he_ma_master.utils.Constants;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.util.*;
@@ -155,19 +156,22 @@ public class GoodsInfoServiceImpl extends ServiceImpl<GoodsInfoMapper, GoodsInfo
         //转换类型
         BeanUtils.copyProperties(goodsInfoPage, searchGoodsVoPage);
         List<MallSearchGoodsVO> mallSearchGoodsVoList = new ArrayList<>();
-        goodsInfoPage.getRecords().forEach(goodsInfo -> {
-            // 商品名称过长处理
-            if (goodsInfo.getGoodName().length() > Constants.NAME_MAX_LENGTH){
-                goodsInfo.setGoodName(goodsInfo.getGoodName().substring(0,30)+"...");
-            }
-            if (goodsInfo.getGoodIntro().length() > Constants.NAME_MAX_LENGTH){
-                goodsInfo.setGoodIntro(goodsInfo.getGoodIntro().substring(0,30)+"...");
-            }
-            MallSearchGoodsVO searchGoodsVo = new MallSearchGoodsVO();
-            BeanUtils.copyProperties(goodsInfo, searchGoodsVo);
-            mallSearchGoodsVoList.add(searchGoodsVo);
-        });
+        if (!CollectionUtils.isEmpty(goodsInfoPage.getRecords())){
+            goodsInfoPage.getRecords().forEach(goodsInfo -> {
+                // 商品名称过长处理
+                if (goodsInfo.getGoodName().length() > Constants.NAME_MAX_LENGTH){
+                    goodsInfo.setGoodName(goodsInfo.getGoodName().substring(0,30)+"...");
+                }
+                if (goodsInfo.getGoodIntro().length() > Constants.NAME_MAX_LENGTH){
+                    goodsInfo.setGoodIntro(goodsInfo.getGoodIntro().substring(0,30)+"...");
+                }
+                MallSearchGoodsVO searchGoodsVo = new MallSearchGoodsVO();
+                BeanUtils.copyProperties(goodsInfo, searchGoodsVo);
+                mallSearchGoodsVoList.add(searchGoodsVo);
+            });
+        }
         searchGoodsVoPage.setRecords(mallSearchGoodsVoList);
+        searchGoodsVoPage.setSearchCount(goodsInfoPage.hasNext());
         return searchGoodsVoPage;
     }
 

@@ -17,6 +17,9 @@ import com.zlh.he_ma_master.service.MallUserTokenService;
 import com.zlh.he_ma_master.utils.EncryptUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 import javax.annotation.Resource;
 
 /**
@@ -65,6 +68,7 @@ public class MallUserServiceImpl extends ServiceImpl<MallUserMapper, MallUser>
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateInfo(MallUserUpdateParam userUpdateParam, Long userId) {
         // 1. 校验用户是否存在
         MallUser user = getById(userId);
@@ -72,8 +76,9 @@ public class MallUserServiceImpl extends ServiceImpl<MallUserMapper, MallUser>
             throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
         }
         // 2. 密码为空,说明用户不修改密码
-        if (userUpdateParam.getPasswordMd5() != null){
+        if (StringUtils.hasText(userUpdateParam.getPasswordMd5())){
             user.setPasswordMd5(userUpdateParam.getPasswordMd5());
+            mallUserTokenService.logout(userId);
         }
         user.setIntroduceSign(userUpdateParam.getIntroduceSign());
         user.setNickName(userUpdateParam.getNickName());
