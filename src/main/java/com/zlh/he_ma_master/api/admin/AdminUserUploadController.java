@@ -50,8 +50,7 @@ public class AdminUserUploadController {
                 }
             }
             file.transferTo(destFile);
-            String url = request.getRequestURL().substring(0,request.getRequestURL().lastIndexOf("/he_ma"));
-            URI uri = new URI("car".equals(meg)?(url+"/images/"+newFileName):(url+"/he_ma/goods-img/"+newFileName));
+            URI uri = new URI("car".equals(meg)?("/images/"+newFileName):("/goods-img/"+newFileName));
             return ResultGenerator.getSuccessResult(uri);
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();

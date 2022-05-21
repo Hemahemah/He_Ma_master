@@ -47,3 +47,6 @@ mybatis-plus:
       logic-delete-value: 1
       logic-delete-field: isDelete
 
+constants:
+  filePath: /static/images/
+  goodImgPath: /static/goods-img/
