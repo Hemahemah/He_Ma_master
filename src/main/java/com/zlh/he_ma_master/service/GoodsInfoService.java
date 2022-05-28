@@ -6,8 +6,8 @@ import com.zlh.he_ma_master.api.admin.param.GoodAddParam;
 import com.zlh.he_ma_master.api.admin.param.GoodsEditParam;
 import com.zlh.he_ma_master.api.mall.vo.MallGoodsInfoVO;
 import com.zlh.he_ma_master.api.mall.vo.MallSearchGoodsVO;
-import com.zlh.he_ma_master.entity.GoodsInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zlh.he_ma_master.entity.GoodsInfo;
 
 import java.util.Map;
 

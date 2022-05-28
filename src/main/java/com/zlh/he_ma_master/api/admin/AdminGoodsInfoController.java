@@ -32,8 +32,8 @@ public class AdminGoodsInfoController {
 
     @GetMapping("/goods/list")
     public Result<Page<GoodsInfo>> getGoodsPage(@RequestParam Integer pageNumber,
-                               @RequestParam Integer pageSize,
-                               @TokenToAdminUser AdminUserToken adminUserToken){
+                                                @RequestParam Integer pageSize,
+                                                @TokenToAdminUser AdminUserToken adminUserToken){
         logger.info("adminUser GoodsInfo api, adminUserId={}",adminUserToken.getUserId());
         if ( pageNumber == null || pageSize == null || pageNumber < 1 || pageSize < 10 ){
             return ResultGenerator.getFailResult("分页参数异常!");

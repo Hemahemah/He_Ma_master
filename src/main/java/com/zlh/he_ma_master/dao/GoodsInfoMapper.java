@@ -1,7 +1,7 @@
 package com.zlh.he_ma_master.dao;
 
-import com.zlh.he_ma_master.entity.GoodsInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zlh.he_ma_master.entity.GoodsInfo;
 
 /**
 * @author lh

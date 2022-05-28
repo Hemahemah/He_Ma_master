@@ -4,7 +4,7 @@ server:
 #设置数据源
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/he_ma
+    url: jdbc:mysql://localhost:3306/he_ma_test
     username: root
     password: zxc85167518
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -41,7 +41,8 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     #日志查看sql
-    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       logic-not-delete-value: 0

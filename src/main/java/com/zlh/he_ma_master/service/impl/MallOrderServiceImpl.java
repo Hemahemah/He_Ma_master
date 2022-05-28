@@ -83,9 +83,12 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
             BeanUtils.copyProperties(cartItem, orderItem);
             orderItem.setOrderId(order.getOrderId());
             goodsInfo.setStockNum(goodsInfo.getStockNum() - cartItem.getGoodCount());
+            if (!goodsInfoService.updateById(goodsInfo)){
+                throw new HeMaException(goodsInfo.getGoodName()+ServiceResultEnum.GOODS_ITEM_COUNT_ERROR.getResult());
+            }
             orderItemList.add(orderItem);
         });
-        if (!(goodsInfoService.updateBatchById(goodsInfoList) && orderItemService.saveBatch(orderItemList))){
+        if (!orderItemService.saveBatch(orderItemList)){
             throw new HeMaException(ServiceResultEnum.GOODS_ITEM_ERROR.getResult());
         }
         // 4. 生成订单地址快照

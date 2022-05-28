@@ -126,7 +126,7 @@ public class UserAddressServiceImpl extends ServiceImpl<UserAddressMapper, UserA
         queryWrapper.eq("user_id", userId).eq("default_flag", 1);
         UserAddress userAddress = getOne(queryWrapper);
         if (userAddress == null){
-            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+            return null;
         }
         MallUserAddressVO mallUserAddressVo = new MallUserAddressVO();
         BeanUtils.copyProperties(userAddress, mallUserAddressVo);

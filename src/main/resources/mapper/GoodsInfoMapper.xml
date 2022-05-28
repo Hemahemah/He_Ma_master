@@ -14,12 +14,13 @@
             <result property="originalPrice" column="original_price" jdbcType="DECIMAL"/>
             <result property="sellingPrice" column="selling_price" jdbcType="DECIMAL"/>
             <result property="stockNum" column="stock_num" jdbcType="INTEGER"/>
+            <result property="goodVersion" column="good_version" jdbcType="BIGINT"/>
             <result property="goodDetailContent" column="good_detail_content" jdbcType="VARCHAR"/>
             <result property="tag" column="tag" jdbcType="VARCHAR"/>
             <result property="goodSellStatus" column="good_sell_status" jdbcType="TINYINT"/>
-            <result property="createUser" column="create_user" jdbcType="INTEGER"/>
+            <result property="createUser" column="create_user" jdbcType="OTHER"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="updateUser" column="update_user" jdbcType="INTEGER"/>
+            <result property="updateUser" column="update_user" jdbcType="OTHER"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
     </resultMap>
@@ -28,8 +29,8 @@
         good_id,good_name,good_intro,
         good_category_id,good_img,good_carousel,
         original_price,selling_price,stock_num,
-        good_detail_content,tag,good_sell_status,
-        create_user,create_time,update_user,
-        update_time,is_delete
+        good_version,good_detail_content,tag,
+        good_sell_status,create_user,create_time,
+        update_user,update_time,is_delete
     </sql>
 </mapper>

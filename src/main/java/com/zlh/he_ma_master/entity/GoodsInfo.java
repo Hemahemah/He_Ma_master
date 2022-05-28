@@ -64,6 +64,12 @@ public class GoodsInfo implements Serializable {
     private Integer stockNum;
 
     /**
+     * 乐观锁
+     */
+    @Version
+    private Long goodVersion;
+
+    /**
      * 商品详情
      */
     private String goodDetailContent;
@@ -81,23 +87,23 @@ public class GoodsInfo implements Serializable {
     /**
      * 添加者主键id
      */
-    private Integer createUser;
+    private Object createUser;
 
     /**
      * 商品添加时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
      * 修改者主键id
      */
-    private Integer updateUser;
+    private Object updateUser;
 
     /**
      * 商品修改时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     /**
@@ -130,6 +136,7 @@ public class GoodsInfo implements Serializable {
             && (this.getOriginalPrice() == null ? other.getOriginalPrice() == null : this.getOriginalPrice().equals(other.getOriginalPrice()))
             && (this.getSellingPrice() == null ? other.getSellingPrice() == null : this.getSellingPrice().equals(other.getSellingPrice()))
             && (this.getStockNum() == null ? other.getStockNum() == null : this.getStockNum().equals(other.getStockNum()))
+            && (this.getGoodVersion() == null ? other.getGoodVersion() == null : this.getGoodVersion().equals(other.getGoodVersion()))
             && (this.getGoodDetailContent() == null ? other.getGoodDetailContent() == null : this.getGoodDetailContent().equals(other.getGoodDetailContent()))
             && (this.getTag() == null ? other.getTag() == null : this.getTag().equals(other.getTag()))
             && (this.getGoodSellStatus() == null ? other.getGoodSellStatus() == null : this.getGoodSellStatus().equals(other.getGoodSellStatus()))
@@ -153,6 +160,7 @@ public class GoodsInfo implements Serializable {
         result = prime * result + ((getOriginalPrice() == null) ? 0 : getOriginalPrice().hashCode());
         result = prime * result + ((getSellingPrice() == null) ? 0 : getSellingPrice().hashCode());
         result = prime * result + ((getStockNum() == null) ? 0 : getStockNum().hashCode());
+        result = prime * result + ((getGoodVersion() == null) ? 0 : getGoodVersion().hashCode());
         result = prime * result + ((getGoodDetailContent() == null) ? 0 : getGoodDetailContent().hashCode());
         result = prime * result + ((getTag() == null) ? 0 : getTag().hashCode());
         result = prime * result + ((getGoodSellStatus() == null) ? 0 : getGoodSellStatus().hashCode());
@@ -179,6 +187,7 @@ public class GoodsInfo implements Serializable {
         sb.append(", originalPrice=").append(originalPrice);
         sb.append(", sellingPrice=").append(sellingPrice);
         sb.append(", stockNum=").append(stockNum);
+        sb.append(", goodVersion=").append(goodVersion);
         sb.append(", goodDetailContent=").append(goodDetailContent);
         sb.append(", tag=").append(tag);
         sb.append(", goodSellStatus=").append(goodSellStatus);

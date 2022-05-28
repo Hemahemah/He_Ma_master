@@ -16,6 +16,7 @@ import com.zlh.he_ma_master.service.GoodsCategoryService;
 import com.zlh.he_ma_master.dao.GoodsCategoryMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -79,9 +80,7 @@ public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, G
         return updateById(updateCategory);
     }
 
-    /**
-     * todo warn Transaction not enabled ??
-      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeCategory(BatchIdParam idParam) {
         // 1. 如果不存在id参数,直接返回

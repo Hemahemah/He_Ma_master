@@ -148,6 +148,11 @@ public enum ServiceResultEnum {
     GOODS_ITEM_ERROR("商品数据异常!"),
 
     /**
+     * 商品数据异常信息
+     */
+    GOODS_ITEM_COUNT_ERROR("商品库存异常!:"),
+
+    /**
      * 订单价格异常信息
      */
     ORDER_PRICE_ERROR("订单价格异常！"),
