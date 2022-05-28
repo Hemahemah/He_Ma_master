@@ -17,6 +17,8 @@ import com.zlh.he_ma_master.common.ServiceResultEnum;
 import com.zlh.he_ma_master.entity.Carousel;
 import com.zlh.he_ma_master.service.CarouselService;
 import com.zlh.he_ma_master.dao.CarouselMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CarouselServiceImpl extends ServiceImpl<CarouselMapper, Carousel>
     implements CarouselService{
+
 
     @Override
     public Page<Carousel> getCarouselPage(Integer pageNumber, Integer pageSize) {
