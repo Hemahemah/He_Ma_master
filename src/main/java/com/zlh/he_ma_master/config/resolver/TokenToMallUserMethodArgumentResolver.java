@@ -45,6 +45,9 @@ public class TokenToMallUserMethodArgumentResolver implements HandlerMethodArgum
         if (StringUtils.hasText(token) && token.length() == Constants.TOKEN_LENGTH){
             // 2. 查询用户
             String userStr = stringRedisTemplate.opsForValue().get(RedisConstants.LOGIN_USER_KEY + token);
+            if (!StringUtils.hasText(userStr)){
+                throw new HeMaException(ServiceResultEnum.MALL_USER_NOT_LOGIN_ERROR.getResult());
+            }
             MallUser mallUser = JSONUtil.toBean(userStr, MallUser.class);
             // 3. 校验用户状态
             if (mallUser.getLockedFlag() == 1){
