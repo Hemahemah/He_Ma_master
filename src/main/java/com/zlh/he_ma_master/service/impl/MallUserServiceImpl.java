@@ -2,11 +2,15 @@ package com.zlh.he_ma_master.service.impl;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zlh.he_ma_master.api.mall.param.MallUserRegisterParam;
 import com.zlh.he_ma_master.api.mall.param.MallUserUpdateParam;
+import com.zlh.he_ma_master.api.mall.vo.MallUserVO;
 import com.zlh.he_ma_master.common.HeMaException;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
 import com.zlh.he_ma_master.entity.MallUser;
@@ -15,7 +19,9 @@ import com.zlh.he_ma_master.service.MallUserService;
 import com.zlh.he_ma_master.dao.MallUserMapper;
 import com.zlh.he_ma_master.service.MallUserTokenService;
 import com.zlh.he_ma_master.utils.EncryptUtil;
+import com.zlh.he_ma_master.utils.RedisConstants;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -33,39 +39,29 @@ public class MallUserServiceImpl extends ServiceImpl<MallUserMapper, MallUser>
     @Resource
     private MallUserTokenService mallUserTokenService;
 
-    @Override
-    public String login(String loginName, String passwordMd5) {
-        // 1. 查询用户信息
-        QueryWrapper<MallUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("login_name",loginName).eq("password_md5",passwordMd5);
-        MallUser user = getOne(queryWrapper);
-        if (user != null){
-            // 2. 判断用户状态
-            if (user.getLockedFlag() == 1){
-                return ServiceResultEnum.LOGIN_USER_LOCKED_ERROR.getResult();
-            }
-            // 3. 获取用户token
-            QueryWrapper<MallUserToken> tokenQueryWrapper = new QueryWrapper<>();
-            tokenQueryWrapper.eq("user_id",user.getUserId());
-            MallUserToken userToken = mallUserTokenService.getOne(tokenQueryWrapper);
-            Date updateTime = new Date();
-            //72小时过期
-            Date expireTime = new Date(updateTime.getTime()+ 3 * 24 * 3600 * 1000);
-            //如果token为空,创建token
-            if (userToken == null){
-                String newToken = EncryptUtil.getToken(String.valueOf(user.getUserId()));
-                userToken = new MallUserToken();
-                userToken.setToken(newToken);
-                userToken.setUserId(user.getUserId());
-            }
-            userToken.setUpdateTime(updateTime);
-            userToken.setExpireTime(expireTime);
-            mallUserTokenService.saveOrUpdate(userToken);
-            return userToken.getToken();
-        }else {
-            return ServiceResultEnum.LOGIN_ERROR.getResult();
-        }
-    }
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+   @Override
+   public String login(String loginName, String passwordMd5) {
+       // 1. 查询用户信息
+       QueryWrapper<MallUser> queryWrapper = new QueryWrapper<>();
+       queryWrapper.eq("login_name",loginName).eq("password_md5",passwordMd5);
+       MallUser user = getOne(queryWrapper);
+       if (user != null){
+           // 2. 判断用户状态
+           if (user.getLockedFlag() == 1){
+               return ServiceResultEnum.LOGIN_USER_LOCKED_ERROR.getResult();
+           }
+           // 3. 生成token
+           String token = EncryptUtil.getToken(String.valueOf(user.getUserId()));
+           String userStr = JSONUtil.toJsonStr(user);
+           stringRedisTemplate.opsForValue().set(RedisConstants.LOGIN_USER_KEY + token, userStr, RedisConstants.LOGIN_USER_TTL, TimeUnit.HOURS);
+           return token;
+       }else {
+           return ServiceResultEnum.LOGIN_ERROR.getResult();
+       }
+   }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
