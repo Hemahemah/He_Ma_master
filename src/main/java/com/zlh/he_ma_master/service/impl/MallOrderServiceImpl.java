@@ -48,6 +48,9 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     @Resource
     private OrderAddressService orderAddressService;
 
+    @Resource
+    private NumberUtil numberUtil;
+
     @Override
     @SuppressWarnings("unchecked")
     @Transactional(rollbackFor = Exception.class)
@@ -61,7 +64,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         }
         // 2.生成订单
         MallOrder order = new MallOrder();
-        String orderNo = NumberUtil.getOrderNo();
+        String orderNo = numberUtil.getOrderNo();
         order.setOrderNo(orderNo);
         order.setUserId(mallUser.getUserId());
         order.setOrderStatus(0);

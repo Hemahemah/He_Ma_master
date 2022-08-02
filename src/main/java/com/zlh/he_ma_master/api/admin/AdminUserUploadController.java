@@ -32,8 +32,7 @@ public class AdminUserUploadController {
     @PostMapping("/upload/file/{meg}")
     public Result<URI> uploadFile(@RequestParam("file") MultipartFile file,
                              @TokenToAdminUser AdminUserToken adminUserToken,
-                             @PathVariable String meg,
-                             HttpServletRequest request){
+                             @PathVariable String meg){
         logger.info("upload file api,adminUer={}",adminUserToken.getUserId());
         String filename = file.getOriginalFilename();
         String suffixName = Objects.requireNonNull(filename).substring(filename.lastIndexOf("."));

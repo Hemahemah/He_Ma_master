@@ -2,8 +2,6 @@ package com.zlh.he_ma_master.config;
 
 import com.zlh.he_ma_master.config.resolver.TokenToAdminUserMethodArgumentResolver;
 import com.zlh.he_ma_master.config.resolver.TokenToMallUserMethodArgumentResolver;
-import com.zlh.he_ma_master.utils.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

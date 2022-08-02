@@ -15,4 +15,9 @@ public class RedisConstants {
      * token过期时间 72小时
      */
     public static final Long LOGIN_USER_TTL = 72L;
+
+    /**
+     * 订单Id前缀
+     */
+    public static final String MALL_ORDER_KEY = "he_ma:icr:order:";
 }
