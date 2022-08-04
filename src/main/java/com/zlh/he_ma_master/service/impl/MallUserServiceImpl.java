@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
 * @author lh
@@ -65,7 +66,7 @@ public class MallUserServiceImpl extends ServiceImpl<MallUserMapper, MallUser>
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateInfo(MallUserUpdateParam userUpdateParam, Long userId) {
+    public boolean updateInfo(MallUserUpdateParam userUpdateParam, Long userId, String token) {
         // 1. 校验用户是否存在
         MallUser user = getById(userId);
         if (user == null){
@@ -74,7 +75,7 @@ public class MallUserServiceImpl extends ServiceImpl<MallUserMapper, MallUser>
         // 2. 密码为空,说明用户不修改密码
         if (StringUtils.hasText(userUpdateParam.getPasswordMd5())){
             user.setPasswordMd5(userUpdateParam.getPasswordMd5());
-            mallUserTokenService.logout(userId);
+            mallUserTokenService.logout(userId, token);
         }
         user.setIntroduceSign(userUpdateParam.getIntroduceSign());
         user.setNickName(userUpdateParam.getNickName());

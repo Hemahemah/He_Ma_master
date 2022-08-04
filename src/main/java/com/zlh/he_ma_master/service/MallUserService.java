@@ -6,6 +6,8 @@ import com.zlh.he_ma_master.api.mall.param.MallUserUpdateParam;
 import com.zlh.he_ma_master.entity.MallUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
 * 用户服务模块
 * @author lh
@@ -27,7 +29,7 @@ public interface MallUserService extends IService<MallUser> {
      * @param userId 用户ID
      * @return true 修改成功
      */
-    boolean updateInfo(MallUserUpdateParam userUpdateParam, Long userId);
+    boolean updateInfo(MallUserUpdateParam userUpdateParam, Long userId,String token);
 
     /**
      * 注册

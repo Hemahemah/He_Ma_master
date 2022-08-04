@@ -1,11 +1,14 @@
 package com.zlh.he_ma_master.config;
 
+import com.zlh.he_ma_master.config.interceptor.LoginInterceptor;
 import com.zlh.he_ma_master.config.resolver.TokenToAdminUserMethodArgumentResolver;
 import com.zlh.he_ma_master.config.resolver.TokenToMallUserMethodArgumentResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -25,6 +28,9 @@ public class HeMaWebMvcConfigurer implements WebMvcConfigurer {
     @Resource
     private TokenToMallUserMethodArgumentResolver tokenToMallUserMethodArgumentResolver;
 
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
     @Value("${constants.goodImgPath}")
     private String goodImgPath;
 
@@ -41,6 +47,11 @@ public class HeMaWebMvcConfigurer implements WebMvcConfigurer {
         registry.addMapping("/**").allowedOriginPatterns("*")
                 .allowedMethods("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true).maxAge(3600);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LoginInterceptor(stringRedisTemplate)).addPathPatterns("/he_ma_api/**");
     }
 
     @Override

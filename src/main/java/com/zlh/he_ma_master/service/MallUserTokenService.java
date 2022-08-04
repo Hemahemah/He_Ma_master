@@ -12,7 +12,8 @@ public interface MallUserTokenService extends IService<MallUserToken> {
     /**
      * 登出
      * @param userId 用户编号
+     * @param token token
      * @return true 删除成功
      */
-    boolean logout(Long userId);
+    boolean logout(Long userId, String token);
 }

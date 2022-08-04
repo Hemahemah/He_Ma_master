@@ -8,7 +8,6 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 public class HeMaExceptionHandler {
 
     /**
-     * todo: 异常处理状态码
      * 统一处理异常
      */
     @ExceptionHandler(Exception.class)

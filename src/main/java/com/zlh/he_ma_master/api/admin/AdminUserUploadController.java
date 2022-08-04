@@ -3,14 +3,13 @@ package com.zlh.he_ma_master.api.admin;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
 import com.zlh.he_ma_master.config.annotation.TokenToAdminUser;
 import com.zlh.he_ma_master.entity.AdminUserToken;
-import com.zlh.he_ma_master.utils.Constants;
 import com.zlh.he_ma_master.utils.Result;
 import com.zlh.he_ma_master.utils.ResultGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -29,6 +28,12 @@ public class AdminUserUploadController {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminUserUploadController.class);
 
+    @Value("${constants.fileUploadDic}")
+    private String fileUploadDic;
+
+    @Value("${constants.goodImgDic}")
+    private String goodImgDic;
+
     @PostMapping("/upload/file/{meg}")
     public Result<URI> uploadFile(@RequestParam("file") MultipartFile file,
                              @TokenToAdminUser AdminUserToken adminUserToken,
@@ -40,8 +45,8 @@ public class AdminUserUploadController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         Random r = new Random();
         String newFileName = sdf.format(new Date()) + r.nextInt(100) + suffixName;
-        File fileDirectory = new File("car".equals(meg)?Constants.FILE_UPLOAD_DIC:Constants.GOOD_IMG_DIC);
-        File destFile = new File("car".equals(meg)?(Constants.FILE_UPLOAD_DIC + newFileName):(Constants.GOOD_IMG_DIC + newFileName));
+        File fileDirectory = new File("car".equals(meg)?fileUploadDic:goodImgDic);
+        File destFile = new File("car".equals(meg)?(fileUploadDic + newFileName):(goodImgDic + newFileName));
         try {
             if (!fileDirectory.exists()) {
                 if (!fileDirectory.mkdir()) {

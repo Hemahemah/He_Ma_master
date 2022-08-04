@@ -15,9 +15,11 @@ import com.zlh.he_ma_master.utils.ResultGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpRequest;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -52,9 +54,9 @@ public class MallUserController {
     }
 
     @PostMapping("/user/logout")
-    public Result<String> logout(@TokenToMallUser MallUser mallUser){
+    public Result<String> logout(@TokenToMallUser MallUser mallUser, HttpServletRequest httpRequest){
         logger.info("logout api,loginName={}", mallUser.getLoginName());
-        if (mallUserTokenService.logout(mallUser.getUserId())){
+        if (mallUserTokenService.logout(mallUser.getUserId(), httpRequest.getHeader("token"))){
             return ResultGenerator.getSuccessResult();
         }else {
             return ResultGenerator.getFailResult("logout error");
@@ -70,9 +72,9 @@ public class MallUserController {
     }
 
     @PutMapping("/user/info")
-    public Result<String> updateInfo(@RequestBody @Valid MallUserUpdateParam userUpdateParam, @TokenToMallUser MallUser mallUser){
+    public Result<String> updateInfo(@RequestBody @Valid MallUserUpdateParam userUpdateParam, @TokenToMallUser MallUser mallUser,  HttpServletRequest httpRequest){
         logger.info("update api,loginName={}", mallUser.getLoginName());
-        if (mallUserService.updateInfo(userUpdateParam, mallUser.getUserId())){
+        if (mallUserService.updateInfo(userUpdateParam, mallUser.getUserId(), httpRequest.getHeader("token"))){
             return ResultGenerator.getSuccessResult();
         }else {
             return ResultGenerator.getFailResult("修改失败!");
