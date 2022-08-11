@@ -4,12 +4,13 @@ server:
 
 #设置数据源
 spring:
+  main:
+    allow-circular-references: true
   datasource:
     url: jdbc:mysql://localhost:3306/he_ma
     username: root
     password: zxc85167518
     driver-class-name: com.mysql.cj.jdbc.Driver
-
     #连接池设置
     druid:
       filters: stat,wall
@@ -33,15 +34,6 @@ spring:
     database: 0
   jackson:
     default-property-inclusion: non_null # JSON处理时忽略非空字段
-pool:
- #核心线程池
- corePoolsize: 16
- #最大线程池
- maxPoolSize: 40
- #活跃时间
- keepAliveSeconds: 300
- #队列容量
- queueCapacity: 10
 #mybatis-plus配置
 mybatis-plus:
   configuration:

@@ -33,15 +33,6 @@ spring:
     database: 0
   jackson:
     default-property-inclusion: non_null # JSON处理时忽略非空字段
-pool:
- #核心线程池
- corePoolsize: 16
- #最大线程池
- maxPoolSize: 40
- #活跃时间
- keepAliveSeconds: 300
- #队列容量
- queueCapacity: 10
 #mybatis-plus配置
 mybatis-plus:
   configuration:
