@@ -4,11 +4,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zlh.he_ma_master.api.admin.param.ConfigAddParam;
 import com.zlh.he_ma_master.api.admin.param.ConfigEditParam;
 import com.zlh.he_ma_master.api.mall.vo.MallIndexConfigGoodsVO;
+import com.zlh.he_ma_master.api.mall.vo.MallIndexInfoVO;
 import com.zlh.he_ma_master.entity.IndexConfig;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.util.concurrent.ListenableFuture;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * 首页配置管理模块
@@ -49,9 +51,14 @@ public interface IndexConfigService extends IService<IndexConfig> {
 
     /**
      * 获取首页商品
-     * @param type 首页配置类型
-     * @param indexGoodsHotNumber 商品数量
      * @return 商品列表
      */
-    ListenableFuture<List<MallIndexConfigGoodsVO>> getConfigGoodsForIndex(int type, int indexGoodsHotNumber);
+    MallIndexInfoVO getConfigGoodsForIndex();
+
+    /**
+     * 获取首页商品（缓存预热）
+     * @return 首页信息
+     */
+    MallIndexInfoVO getIndex();
+
 }

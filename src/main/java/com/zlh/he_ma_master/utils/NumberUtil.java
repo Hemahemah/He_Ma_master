@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,11 +36,6 @@ public class NumberUtil {
         return matcher.matches();
     }
 
-   /* public static String getOrderNo(){
-        String orderId = String.valueOf(System.currentTimeMillis());
-        int num = EncryptUtil.genRandomNum(4);
-        return orderId + num;
-    }*/
 
     public String getOrderNo(){
         // 1.生成时间戳
@@ -49,6 +45,7 @@ public class NumberUtil {
         // 2.1获取当前日期
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd"));
         Long increment = stringRedisTemplate.opsForValue().increment(RedisConstants.MALL_ORDER_KEY + date);
+        stringRedisTemplate.expire(RedisConstants.MALL_ORDER_KEY + date, RedisConstants.INCR_ORDER_TTL, TimeUnit.HOURS);
         // 3.拼接返回
         return String.valueOf(timestamp << COUNT_BITS | increment);
     }

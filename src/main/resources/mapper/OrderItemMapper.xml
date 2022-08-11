@@ -23,4 +23,16 @@
         good_count,is_deleted,create_time,
         update_time
     </sql>
+
+    <select id="getOrderListByOrderNo" parameterType="string" resultMap="BaseResultMap">
+        SELECT good_id, good_count FROM `mall_order` o
+        JOIN order_item oi ON oi.order_id = o.order_id
+        WHERE order_no = #{orderNo}
+    </select>
+
+    <select id="getOrderListByOrderId" parameterType="long" resultMap="BaseResultMap">
+        SELECT good_id, good_count FROM `mall_order` o
+        JOIN order_item oi ON oi.order_id = o.order_id
+        WHERE o.order_id = #{orderId}
+    </select>
 </mapper>

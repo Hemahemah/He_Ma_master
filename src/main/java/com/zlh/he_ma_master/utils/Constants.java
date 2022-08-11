@@ -82,6 +82,11 @@ public class Constants {
     public final static int GOODS_SEARCH_PAGE_LIMIT = 10;
 
     /**
+     * 订单超时时间
+     */
+    public final static long ORDER_EXPIRE_TIME = 30 * 60 * 1000L;
+
+    /**
      * 我的订单列表分页的默认条数(每页5条)
      */
     public final static int ORDER_SEARCH_PAGE_LIMIT = 5;

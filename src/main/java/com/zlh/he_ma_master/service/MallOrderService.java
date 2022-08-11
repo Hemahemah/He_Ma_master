@@ -102,4 +102,10 @@ public interface MallOrderService extends IService<MallOrder> {
      * @return true 关闭成功
      */
     boolean handleClose(BatchIdParam idParam);
+
+    /**
+     * 超时关闭订单
+     * @param orderId 订单Id
+     */
+    void closeOvertimeOrder(Long orderId);
 }

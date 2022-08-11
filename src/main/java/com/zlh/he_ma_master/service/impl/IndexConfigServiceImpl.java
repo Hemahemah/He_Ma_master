@@ -1,30 +1,33 @@
 package com.zlh.he_ma_master.service.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zlh.he_ma_master.api.admin.param.ConfigAddParam;
 import com.zlh.he_ma_master.api.admin.param.ConfigEditParam;
+import com.zlh.he_ma_master.api.mall.vo.MallIndexCarouselVO;
 import com.zlh.he_ma_master.api.mall.vo.MallIndexConfigGoodsVO;
+import com.zlh.he_ma_master.api.mall.vo.MallIndexInfoVO;
 import com.zlh.he_ma_master.common.HeMaException;
+import com.zlh.he_ma_master.common.IndexConfigTypeEnum;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
 import com.zlh.he_ma_master.entity.GoodsInfo;
 import com.zlh.he_ma_master.entity.IndexConfig;
+import com.zlh.he_ma_master.service.CarouselService;
 import com.zlh.he_ma_master.service.GoodsInfoService;
 import com.zlh.he_ma_master.service.IndexConfigService;
 import com.zlh.he_ma_master.dao.IndexConfigMapper;
 import com.zlh.he_ma_master.utils.Constants;
+import com.zlh.he_ma_master.utils.RedisConstants;
 import org.springframework.beans.BeanUtils;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +40,12 @@ public class IndexConfigServiceImpl extends ServiceImpl<IndexConfigMapper, Index
 
     @Resource
     private GoodsInfoService goodsInfoService;
+
+    @Resource
+    private CarouselService carouselService;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public Page<IndexConfig> getPages(Integer pageNumber, Integer pageSize, Integer configType) {
@@ -100,9 +109,34 @@ public class IndexConfigServiceImpl extends ServiceImpl<IndexConfigMapper, Index
     }
 
     @Override
-    @Async("indexConfigServiceExecutor")
-    public ListenableFuture<List<MallIndexConfigGoodsVO>> getConfigGoodsForIndex(int type, int indexGoodsHotNumber) {
-         List<MallIndexConfigGoodsVO> mallIndexConfigGoodsVos = new ArrayList<>(indexGoodsHotNumber);
+    public MallIndexInfoVO getConfigGoodsForIndex() {
+        // 1.查询缓存
+        String indexConfig = stringRedisTemplate.opsForValue().get(RedisConstants.MALL_INDEX_KEY);
+        // 2.缓存没有数据，查询数据库并写入缓存
+        if (!StringUtils.hasText(indexConfig)){
+            MallIndexInfoVO index = getIndex();
+            stringRedisTemplate.opsForValue().set(RedisConstants.MALL_INDEX_KEY, JSONUtil.toJsonStr(index), RedisConstants.MALL_INDEX_TTL, TimeUnit.HOURS);
+            return index;
+        }
+        return JSONUtil.toBean(indexConfig, MallIndexInfoVO.class);
+    }
+
+    @Override
+    public MallIndexInfoVO getIndex(){
+        MallIndexInfoVO mallIndexInfoVO = new MallIndexInfoVO();
+        List<MallIndexCarouselVO> carousel = carouselService.getCarouselForIndex(Constants.INDEX_CAROUSEL_NUMBER);
+        List<MallIndexConfigGoodsVO> hotGoodies = getIndexByType(IndexConfigTypeEnum.INDEX_GOODS_HOT.getType(), Constants.INDEX_GOODS_HOT_NUMBER);
+        List<MallIndexConfigGoodsVO> newGoodies = getIndexByType(IndexConfigTypeEnum.INDEX_GOODS_NEW.getType(), Constants.INDEX_GOODS_NEW_NUMBER);
+        List<MallIndexConfigGoodsVO> recommendGoodies = getIndexByType(IndexConfigTypeEnum.INDEX_GOODS_RECOMMEND.getType(), Constants.INDEX_GOODS_RECOMMEND_NUMBER);
+        mallIndexInfoVO.setCarousels(carousel);
+        mallIndexInfoVO.setHotGoodses(hotGoodies);
+        mallIndexInfoVO.setNewGoodses(newGoodies);
+        mallIndexInfoVO.setRecommendGoodses(recommendGoodies);
+        return mallIndexInfoVO;
+    }
+
+    private List<MallIndexConfigGoodsVO> getIndexByType(int type, int indexGoodsHotNumber) {
+        List<MallIndexConfigGoodsVO> mallIndexConfigGoodsVos = new ArrayList<>(indexGoodsHotNumber);
         Page<IndexConfig> pages = getPages(1, indexGoodsHotNumber, type);
         // 1. 获取对应配置类型的商品id
         List<Long> goodsId = pages.getRecords().stream().map(IndexConfig::getGoodsId).collect(Collectors.toList());
@@ -120,7 +154,7 @@ public class IndexConfigServiceImpl extends ServiceImpl<IndexConfigMapper, Index
             }
             mallIndexConfigGoodsVos.add(indexConfigGoodsVO);
         });
-        return AsyncResult.forValue(mallIndexConfigGoodsVos);
+        return mallIndexConfigGoodsVos;
     }
 
     private IndexConfig copyProperties(Object obj){

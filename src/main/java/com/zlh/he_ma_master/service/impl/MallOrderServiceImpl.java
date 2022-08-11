@@ -15,6 +15,7 @@ import com.zlh.he_ma_master.dao.MallOrderMapper;
 import com.zlh.he_ma_master.utils.Constants;
 import com.zlh.he_ma_master.utils.NumberUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -48,6 +49,9 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     @Resource
     private OrderAddressService orderAddressService;
 
+    @Autowired
+    private DelayOrderService delayOrderService;
+
     @Resource
     private NumberUtil numberUtil;
 
@@ -70,7 +74,8 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         order.setOrderStatus(0);
         order.setExtraInfo("");
         order.setTotalPrice((BigDecimal) orderMap.get("totalPrice"));
-        if (!save(order)){
+        // 2.1 保存订单并存入延时队列
+        if (!save(order) || !delayOrderService.addToDelayQueue(new DelayItem(order.getOrderId(), new Date()))){
             throw new HeMaException(ServiceResultEnum.SAVE_ORDER_ERROR.getResult());
         }
         // 3. 更新商品库存并生成订单项
@@ -123,6 +128,8 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         mallOrder.setPayType(payType);
         mallOrder.setUpdateTime(new Date());
         mallOrder.setOrderStatus(MallOrderStatusEnum.ORDER_PAID.getOrderStatus());
+        // 2.将订单移除延时队列
+        delayOrderService.removeToDelayQueue(mallOrder);
         return updateById(mallOrder);
     }
 
@@ -195,6 +202,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean cancelOrder(String orderNo, Long userId) {
         // 1. 查询订单
         QueryWrapper<MallOrder> queryWrapper = new QueryWrapper<>();
@@ -210,10 +218,13 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
                mallOrder.getOrderStatus() == MallOrderStatusEnum.ORDER_CLOSED_BY_JUDGE.getOrderStatus()){
             throw new HeMaException(ServiceResultEnum.ORDER_STATUS_ERROR.getResult());
        }
-       // 3. 修改订单状态
+        // 3. 修改订单状态
         mallOrder.setOrderStatus(MallOrderStatusEnum.ORDER_CLOSED_BY_USER.getOrderStatus());
         mallOrder.setUpdateTime(new Date());
-        return updateById(mallOrder);
+        delayOrderService.removeToDelayQueue(mallOrder);
+        // 4. 修改商品数量
+        List<OrderItem> orderList = orderItemService.getOrderListByOrderNo(orderNo);
+        return updateById(mallOrder) && goodsInfoService.updateGoodsCount(orderList);
     }
 
     @Override
@@ -276,6 +287,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean handleClose(BatchIdParam idParam) {
         // 1. 获取订单
         QueryWrapper<MallOrder> queryWrapper = new QueryWrapper<>();
@@ -291,8 +303,33 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
             }
             mallOrder.setOrderStatus(MallOrderStatusEnum.ORDER_CLOSED_BY_JUDGE.getOrderStatus());
         });
-        // 2. 修改状态
-        return updateBatchById(mallOrders);
+        // 2. 修改状态和商品数量
+        List<OrderItem> orderItemList = new ArrayList<>();
+        for (Long id : idParam.getIds()) {
+            List<OrderItem> itemList = orderItemService.getOrderListByOrderId(id);
+            orderItemList.addAll(itemList);
+        }
+        return updateBatchById(mallOrders) && goodsInfoService.updateGoodsCount(orderItemList);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void closeOvertimeOrder(Long orderId) {
+        // 1. 获取订单
+        QueryWrapper<MallOrder> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("order_id", orderId);
+        MallOrder mallOrder = getOne(queryWrapper);
+        if (mallOrder == null){
+            throw new HeMaException(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+        }
+        if (mallOrder.getOrderStatus() != MallOrderStatusEnum.ORDER_PRE_PAY.getOrderStatus()){
+            throw new HeMaException(ServiceResultEnum.ORDER_STATUS_ERROR.getResult());
+        }
+        mallOrder.setOrderStatus(MallOrderStatusEnum.ORDER_CLOSED_BY_EXPIRED.getOrderStatus());
+        // 2.修改商品数量
+        List<OrderItem> orderList = orderItemService.getOrderListByOrderId(orderId);
+        updateById(mallOrder);
+        goodsInfoService.updateGoodsCount(orderList);
     }
 
     /**

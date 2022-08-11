@@ -25,6 +25,8 @@
             <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
     </resultMap>
 
+
+
     <sql id="Base_Column_List">
         good_id,good_name,good_intro,
         good_category_id,good_img,good_carousel,
@@ -33,4 +35,15 @@
         good_sell_status,create_user,create_time,
         update_user,update_time,is_delete
     </sql>
+
+    <update id="updateGoodsCount" parameterType="list">
+        update goods_info SET stock_num = CASE good_id
+        <foreach collection="orderItems" item="orderItem">
+            WHEN #{orderItem.goodId} THEN stock_num + #{orderItem.goodCount}
+        </foreach>
+        END
+        <foreach collection="orderItems" item="orderItem" separator="," open="WHERE good_id IN(" close=")">
+            #{orderItem.goodId}
+        </foreach>
+    </update>
 </mapper>

@@ -56,3 +56,5 @@ mybatis-plus:
 constants:
   filePath: /static/images/
   goodImgPath: /static/goods-img/
+  fileUploadDic: C:\Users\lh\Desktop\static\images\
+  goodImgDic: C:\Users\lh\Desktop\static\goods-img\

@@ -1,12 +1,13 @@
 package com.zlh.he_ma_master.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-
+import java.util.concurrent.Delayed;
+import java.util.concurrent.TimeUnit;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.zlh.he_ma_master.utils.Constants;
 import lombok.Data;
 
 /**
@@ -151,4 +152,6 @@ public class MallOrder implements Serializable {
         sb.append("]");
         return sb.toString();
     }
+
+
 }

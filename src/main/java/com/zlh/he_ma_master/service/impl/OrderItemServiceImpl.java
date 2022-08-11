@@ -5,6 +5,8 @@ import com.zlh.he_ma_master.entity.OrderItem;
 import com.zlh.he_ma_master.service.OrderItemService;
 import com.zlh.he_ma_master.dao.OrderItemMapper;
 import org.springframework.stereotype.Service;
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
 * @author lh
@@ -15,6 +17,18 @@ import org.springframework.stereotype.Service;
 public class OrderItemServiceImpl extends ServiceImpl<OrderItemMapper, OrderItem>
     implements OrderItemService{
 
+    @Resource
+    private OrderItemMapper orderItemMapper;
+
+    @Override
+    public List<OrderItem> getOrderListByOrderNo(String orderNo) {
+        return orderItemMapper.getOrderListByOrderNo(orderNo);
+    }
+
+    @Override
+    public List<OrderItem> getOrderListByOrderId(Long orderId) {
+        return orderItemMapper.getOrderListByOrderId(orderId);
+    }
 }
 
 

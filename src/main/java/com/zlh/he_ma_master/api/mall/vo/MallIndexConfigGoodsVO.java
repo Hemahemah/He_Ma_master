@@ -19,6 +19,8 @@ public class MallIndexConfigGoodsVO implements Serializable {
 
     private String goodImg;
 
+    private Integer configType;
+
     @JsonSerialize(using = ToStringSerializer.class)
     private BigDecimal sellingPrice;
 

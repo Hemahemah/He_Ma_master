@@ -1,7 +1,6 @@
 package com.zlh.he_ma_master.config;
 
 import lombok.Data;
-import lombok.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 @ConfigurationProperties(prefix = "pool")
-public class ThreadPoolConfig {
+public class IndexThreadPoolConfig {
 
     /**
      * 核心线程数

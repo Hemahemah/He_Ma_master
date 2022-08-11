@@ -8,7 +8,10 @@ import com.zlh.he_ma_master.api.mall.vo.MallGoodsInfoVO;
 import com.zlh.he_ma_master.api.mall.vo.MallSearchGoodsVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zlh.he_ma_master.entity.GoodsInfo;
+import com.zlh.he_ma_master.entity.OrderItem;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -71,4 +74,11 @@ public interface GoodsInfoService extends IService<GoodsInfo> {
      * @return 商品详情
      */
     MallGoodsInfoVO getGoodsDetail(Long goodId);
+
+    /**
+     * 根据取消订单信息更新商品数量
+     * @param orderItems 订单信息
+     * @return boolean
+     */
+    boolean updateGoodsCount(@Param("orderItems") List<OrderItem> orderItems);
 }

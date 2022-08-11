@@ -20,4 +20,22 @@ public class RedisConstants {
      * 订单Id前缀
      */
     public static final String MALL_ORDER_KEY = "he_ma:icr:order:";
+
+    /**
+     * 订单Id过期时间 30天
+     */
+    public static final Long INCR_ORDER_TTL = 24 * 30L;
+
+    /**
+     * 商品主页信息过期时间 36小时
+     */
+    public static final Long MALL_INDEX_TTL = 36L;
+
+    /**
+     * 商城主页信息key
+     */
+    public static final String MALL_INDEX_KEY = "he_ma:index:info";
+
+
+
 }

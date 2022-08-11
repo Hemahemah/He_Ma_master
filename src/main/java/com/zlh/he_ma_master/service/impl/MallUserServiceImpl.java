@@ -1,20 +1,16 @@
 package com.zlh.he_ma_master.service.impl;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zlh.he_ma_master.api.mall.param.MallUserRegisterParam;
 import com.zlh.he_ma_master.api.mall.param.MallUserUpdateParam;
-import com.zlh.he_ma_master.api.mall.vo.MallUserVO;
 import com.zlh.he_ma_master.common.HeMaException;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
 import com.zlh.he_ma_master.entity.MallUser;
-import com.zlh.he_ma_master.entity.MallUserToken;
 import com.zlh.he_ma_master.service.MallUserService;
 import com.zlh.he_ma_master.dao.MallUserMapper;
 import com.zlh.he_ma_master.service.MallUserTokenService;
@@ -25,9 +21,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
 * @author lh

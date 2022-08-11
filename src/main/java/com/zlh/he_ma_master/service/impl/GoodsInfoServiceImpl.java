@@ -14,6 +14,7 @@ import com.zlh.he_ma_master.common.MallCategoryLevelEnum;
 import com.zlh.he_ma_master.common.ServiceResultEnum;
 import com.zlh.he_ma_master.entity.GoodsCategory;
 import com.zlh.he_ma_master.entity.GoodsInfo;
+import com.zlh.he_ma_master.entity.OrderItem;
 import com.zlh.he_ma_master.service.GoodsCategoryService;
 import com.zlh.he_ma_master.service.GoodsInfoService;
 import com.zlh.he_ma_master.dao.GoodsInfoMapper;
@@ -35,6 +36,9 @@ public class GoodsInfoServiceImpl extends ServiceImpl<GoodsInfoMapper, GoodsInfo
 
     @Resource
     private GoodsCategoryService categoryService;
+
+    @Resource
+    private GoodsInfoMapper goodsInfoMapper;
 
     @Override
     public Page<GoodsInfo> getGoodsPage(Integer pageNumber, Integer pageSize) {
@@ -186,6 +190,11 @@ public class GoodsInfoServiceImpl extends ServiceImpl<GoodsInfoMapper, GoodsInfo
         BeanUtils.copyProperties(goodsInfo, mallGoodsInfoVO);
         mallGoodsInfoVO.setGoodsCarouselList(goodsInfo.getGoodCarousel().split(","));
         return mallGoodsInfoVO;
+    }
+
+    @Override
+    public boolean updateGoodsCount(List<OrderItem> orderItems) {
+        return goodsInfoMapper.updateGoodsCount(orderItems);
     }
 
     private GoodsInfo copyProperties(Object obj){

@@ -1,7 +1,11 @@
 package com.zlh.he_ma_master.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.zlh.he_ma_master.entity.OrderItem;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author lh
@@ -9,4 +13,17 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface OrderItemService extends IService<OrderItem> {
 
+    /**
+     * 根据订单编号获取订单详情
+     * @param orderNo 订单编号
+     * @return 订单详情
+     */
+    List<OrderItem> getOrderListByOrderNo(@Param("orderNo") String orderNo);
+
+    /**
+     * 根据订单id获取订单详情
+     * @param orderId 订单Id
+     * @return 订单详情
+     */
+    List<OrderItem> getOrderListByOrderId(@Param("orderId") Long orderId);
 }
