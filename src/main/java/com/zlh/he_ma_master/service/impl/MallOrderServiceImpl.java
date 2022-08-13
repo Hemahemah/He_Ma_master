@@ -14,6 +14,7 @@ import com.zlh.he_ma_master.service.*;
 import com.zlh.he_ma_master.dao.MallOrderMapper;
 import com.zlh.he_ma_master.utils.Constants;
 import com.zlh.he_ma_master.utils.NumberUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 * @author lh
 * @createDate 2022-04-20 19:07:33
 */
+@Slf4j
 @Service
 public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder>
     implements MallOrderService{
@@ -68,14 +70,16 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         }
         // 2.生成订单
         MallOrder order = new MallOrder();
+        Date createDate = new Date();
         String orderNo = numberUtil.getOrderNo();
         order.setOrderNo(orderNo);
         order.setUserId(mallUser.getUserId());
+        order.setCreateTime(createDate);
         order.setOrderStatus(0);
         order.setExtraInfo("");
         order.setTotalPrice((BigDecimal) orderMap.get("totalPrice"));
         // 2.1 保存订单并存入延时队列
-        if (!save(order) || !delayOrderService.addToDelayQueue(new DelayItem(order.getOrderId(), new Date()))){
+        if (!save(order) || !delayOrderService.addToDelayQueue(new DelayItem(order.getOrderId(), createDate))){
             throw new HeMaException(ServiceResultEnum.SAVE_ORDER_ERROR.getResult());
         }
         // 3. 更新商品库存并生成订单项
@@ -329,6 +333,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         // 2.修改商品数量
         List<OrderItem> orderList = orderItemService.getOrderListByOrderId(orderId);
         updateById(mallOrder);
+        log.info("MallOrderService:close overtime order:{}",orderId);
         goodsInfoService.updateGoodsCount(orderList);
     }
 

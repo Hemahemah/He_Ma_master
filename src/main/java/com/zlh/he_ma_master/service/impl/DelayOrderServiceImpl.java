@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.Executor;
@@ -41,11 +42,16 @@ public class DelayOrderServiceImpl implements DelayOrderService {
 
     @Override
     public void removeToDelayQueue(MallOrder mallOrder) {
-        DELAY_QUEUE.forEach(delayItem -> {
+        if (mallOrder == null){
+            return;
+        }
+        for(Iterator<DelayItem> iterator = DELAY_QUEUE.iterator(); iterator.hasNext();){
+            DelayItem delayItem = iterator.next();
             if(mallOrder.getOrderId().equals(delayItem.getId())){
+                log.info("delayOrderService:remove queue:orderId={}",mallOrder.getOrderId());
                 DELAY_QUEUE.remove(delayItem);
             }
-        });
+        }
     }
 
     @PostConstruct
